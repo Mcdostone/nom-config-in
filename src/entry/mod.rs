@@ -8,13 +8,14 @@ use crate::{
 
 use self::{
     comment::{parse_comment, Comment},
-    r#if::{parse_if, If}, bool::{parse_bool, Bool}
+    r#if::{parse_if, If}, bool::{parse_bool, Bool}, int::{Int, parse_int}
 };
 
 pub mod comment;
 pub mod r#if;
 pub mod bool;
 pub mod expression;
+pub mod int;
 //pub mod config;
 //pub mod function;
 //pub mod r#if;
@@ -26,6 +27,8 @@ pub mod expression;
 //pub mod variable;
 
 
+#[cfg(test)]
+pub mod int_test;
 #[cfg(test)]
 pub mod expression_test;
 #[cfg(test)]
@@ -40,11 +43,13 @@ pub enum Entry {
     Comment(Comment),
     If(If),
     Bool(Bool),
+    Int(Int),
 }
 
 pub fn parse_entry(input: KconfigInput) -> IResult<KconfigInput, Entry> {
     alt((
         map(ws(parse_bool), Entry::Bool),
+        map(ws(parse_int), Entry::Int),
         map(ws(parse_if), Entry::If),
         map(ws(parse_comment), Entry::Comment),
     ))(input)
