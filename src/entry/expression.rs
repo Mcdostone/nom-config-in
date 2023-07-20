@@ -105,7 +105,7 @@ pub fn parse_or_expression(input: &str) -> IResult<&str, OrExpression> {
     map(
         tuple((
             ws(parse_and_expression),
-            many0(preceded(ws(tag("||")), ws(parse_and_expression))),
+            many0(preceded(ws(tag("-o")), ws(parse_and_expression))),
         )),
         |(l, ee)| {
             if ee.is_empty() {
@@ -123,7 +123,7 @@ pub fn parse_and_expression(input: &str) -> IResult<&str, AndExpression> {
     map(
         tuple((
             ws(parse_term),
-            many0(preceded(ws(tag("&&")), ws(parse_term))),
+            many0(preceded(ws(tag("-a")), ws(parse_term))),
         )),
         |(l, ee)| {
             if ee.is_empty() {

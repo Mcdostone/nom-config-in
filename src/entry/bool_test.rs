@@ -20,3 +20,20 @@ fn test_parse_bool() {
         ))
     )
 }
+
+#[test]
+fn test_parse_bool_no_value() {
+    let input = "bool 'Using SRM as bootloader' CONFIG_ALPHA_SRM";
+    assert_parsing_eq!(
+        parse_bool,
+        input,
+        Ok((
+            "",
+            Bool {
+                prompt: "Using SRM as bootloader".to_string(),
+                symbol: Symbol::Constant("CONFIG_ALPHA_SRM".to_string()),
+                default: None
+            }
+        ))
+    )
+}

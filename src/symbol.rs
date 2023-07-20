@@ -47,7 +47,7 @@ pub fn parse_symbol(input: &str) -> IResult<&str, Symbol> {
 
 pub fn parse_constant_symbol(input: &str) -> IResult<&str, &str> {
     map(
-        recognize(ws(many1(alt((alphanumeric1, recognize(one_of("_"))))))),
+        recognize(ws(many1(alt((alphanumeric1, recognize(one_of("_$+"))))))),
         |c: &str| c.trim(),
     )(input)
 }

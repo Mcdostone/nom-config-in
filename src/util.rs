@@ -26,9 +26,17 @@ where
     value(
         (),
         many0(alt((
-            // TODO 3.0.19/drivers/staging/iio/light/Kconfig, backslash??
             preceded(
                 alt((tag("#"), tag("\\#"))),
+                terminated(not_line_ending, alt((line_ending, eof))),
+            ),
+            preceded(
+                tag(":"),
+                terminated(not_line_ending, alt((line_ending, eof))),
+            ),
+            preceded(tag(r#"\"#), line_ending),
+            preceded(
+                tag("*"),
                 terminated(not_line_ending, alt((line_ending, eof))),
             ),
             multispace1,

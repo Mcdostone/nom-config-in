@@ -39,7 +39,7 @@ fn test_parse_term() {
 fn test_parse_depends_on_and() {
     assert_parsing_eq!(
         parse_expression,
-        "ALPHA_MIATA && ALPHA_LX164",
+        "ALPHA_MIATA -a ALPHA_LX164",
         Ok((
             "",
             Expression(OrExpression::Term(AndExpression::Expression(vec!(
@@ -54,7 +54,7 @@ fn test_parse_depends_on_and() {
 fn test_parse_depends_on_ambigus() {
     assert_parsing_eq!(
         parse_expression,
-        "ALPHA_MIATA || ALPHA_LX164 && ALPHA_SX164",
+        "ALPHA_MIATA -o ALPHA_LX164 -a ALPHA_SX164",
         Ok((
             "",
             Expression(OrExpression::Expression(vec!(
@@ -74,7 +74,7 @@ fn test_parse_depends_on_ambigus() {
 fn test_parse_depends_on_optimization() {
     assert_parsing_eq!(
         parse_expression,
-        "ALPHA_MIATA || ALPHA_LX164 && ALPHA_SX164 && (HELLO = world) || ALPHA_SX164 && (HELLO = world)",
+        "ALPHA_MIATA -o ALPHA_LX164 -a ALPHA_SX164 -a (HELLO = world) -o ALPHA_SX164 -a (HELLO = world)",
         Ok(("", Expression(OrExpression::Expression(
             vec!(
                 AndExpression::Term(Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_MIATA".to_string())))),

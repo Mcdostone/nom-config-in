@@ -26,6 +26,11 @@ pub struct Kconfig {
     pub entries: Vec<Entry>,
 }
 
+#[cfg(test)]
+pub mod symbol_test;
+#[cfg(test)]
+pub mod util_test;
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     let mut entries: Vec<PathBuf> = vec![];
@@ -39,7 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .filter(|entry: &walkdir::DirEntry| {
                     let valid_extension = true;
                     entry.file_type().is_file()
-                        && entry.file_name().to_str().unwrap().contains("Kconfig")
+                        && entry.file_name().to_str().unwrap().contains("config.in")
                         && valid_extension
                 })
                 .map(|x| x.path().canonicalize())

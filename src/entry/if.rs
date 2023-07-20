@@ -34,6 +34,7 @@ pub fn parse_if(input: &str) -> IResult<&str, If> {
 pub struct If {
     pub condition: Expression,
     pub if_block: Vec<Entry>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub else_block: Option<Vec<Entry>>,
 }
 
@@ -42,8 +43,8 @@ pub fn parse_if_condition(input: &str) -> IResult<&str, Expression> {
         tuple((
             ws(tag("if")),
             ws(delimited(tag("["), ws(parse_expression), ws(tag("]")))),
-            ws(tag(";")),
-            ws(tag("then")),
+            opt(ws(tag(";"))),
+            opt(ws(tag("then"))),
         )),
         |(_, e, _, _)| e,
     )(input)
