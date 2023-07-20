@@ -14,9 +14,7 @@ use serde::Serialize;
 use crate::{
     symbol::{parse_symbol, Symbol},
     util::ws,
-    KconfigInput,
 };
-
 
 // (GFS2_FS!=n) && NET && INET && (IPV6 || IPV6=n) && CONFIGFS_FS && SYSFS && (DLM=y || DLM=GFS2_FS)
 
@@ -103,7 +101,7 @@ impl Default for Atom {
     }
 }
 
-pub fn parse_or_expression(input: KconfigInput) -> IResult<KconfigInput, OrExpression> {
+pub fn parse_or_expression(input: &str) -> IResult<&str, OrExpression> {
     map(
         tuple((
             ws(parse_and_expression),
@@ -121,7 +119,7 @@ pub fn parse_or_expression(input: KconfigInput) -> IResult<KconfigInput, OrExpre
     )(input)
 }
 
-pub fn parse_and_expression(input: KconfigInput) -> IResult<KconfigInput, AndExpression> {
+pub fn parse_and_expression(input: &str) -> IResult<&str, AndExpression> {
     map(
         tuple((
             ws(parse_term),
@@ -139,17 +137,19 @@ pub fn parse_and_expression(input: KconfigInput) -> IResult<KconfigInput, AndExp
     )(input)
 }
 
-pub fn parse_term(input: KconfigInput) -> IResult<KconfigInput, Term> {
+pub fn parse_term(input: &str) -> IResult<&str, Term> {
     alt((
         map(preceded(ws(tag("!")), parse_atom), Term::Not),
         map(parse_atom, Term::Atom),
     ))(input)
 }
 
-pub fn parse_atom(input: KconfigInput) -> IResult<KconfigInput, Atom> {
+pub fn parse_atom(input: &str) -> IResult<&str, Atom> {
     alt((
         ws(parse_compare),
-        map(delimited(tag("\""), parse_atom, tag("\"")), |d| Atom::String(Box::new(d))),
+        map(delimited(tag("\""), parse_atom, tag("\"")), |d| {
+            Atom::String(Box::new(d))
+        }),
         map(parse_symbol, Atom::Symbol),
         map(
             delimited(ws(tag("(")), parse_expression, ws(tag(")"))),
@@ -157,15 +157,14 @@ pub fn parse_atom(input: KconfigInput) -> IResult<KconfigInput, Atom> {
         ),
         map(parse_symbol, Atom::Symbol),
         map(parse_number, Atom::Number),
-        
     ))(input)
 }
 
-pub fn parse_expression(input: KconfigInput) -> IResult<KconfigInput, Expression> {
+pub fn parse_expression(input: &str) -> IResult<&str, Expression> {
     map(parse_or_expression, Expression)(input)
 }
 
-pub fn parse_compare_operator(input: KconfigInput) -> IResult<KconfigInput, CompareOperator> {
+pub fn parse_compare_operator(input: &str) -> IResult<&str, CompareOperator> {
     alt((
         value(CompareOperator::GreaterOrEqual, tag(">=")),
         value(CompareOperator::LowerOrEqual, tag("<=")),
@@ -176,11 +175,14 @@ pub fn parse_compare_operator(input: KconfigInput) -> IResult<KconfigInput, Comp
     ))(input)
 }
 
-pub fn parse_compare(input: KconfigInput) -> IResult<KconfigInput, Atom> {
+pub fn parse_compare(input: &str) -> IResult<&str, Atom> {
     map(
         tuple((
             ws(parse_symbol),
-            ws(parse_compare_operator),
+            alt((
+                ws(delimited(tag("\""), ws(parse_compare_operator), tag("\""))),
+                ws(parse_compare_operator),
+            )),
             ws(parse_symbol),
         )),
         |(l, o, r)| {
@@ -193,24 +195,17 @@ pub fn parse_compare(input: KconfigInput) -> IResult<KconfigInput, Atom> {
     )(input)
 }
 
-pub fn parse_if_expression_attribute(input: KconfigInput) -> IResult<KconfigInput, Expression> {
+pub fn parse_if_expression_attribute(input: &str) -> IResult<&str, Expression> {
     map(
         tuple((space1, tag("if"), ws(parse_expression))),
         |(_, _, e)| e,
     )(input)
 }
 
-pub fn parse_hex_number(input: KconfigInput) -> IResult<KconfigInput, i64> {
-    map_res(
-        recognize(pair(opt(char('-')), digit1)),
-        |d: KconfigInput| FromStr::from_str(d.fragment()),
-    )(input)
+pub fn parse_hex_number(input: &str) -> IResult<&str, i64> {
+    map_res(recognize(pair(opt(char('-')), digit1)), FromStr::from_str)(input)
 }
 
-pub fn parse_number(input: KconfigInput) -> IResult<KconfigInput, i64> {
-    map_res(
-        recognize(pair(opt(char('-')), digit1)),
-        |d: KconfigInput| FromStr::from_str(d.fragment()),
-    )(input)
+pub fn parse_number(input: &str) -> IResult<&str, i64> {
+    map_res(recognize(pair(opt(char('-')), digit1)), FromStr::from_str)(input)
 }
-

@@ -1,9 +1,15 @@
-use nom::{bytes::complete::tag, combinator::{map, opt}, sequence::tuple, IResult};
+use nom::{
+    bytes::complete::tag,
+    combinator::{map, opt},
+    sequence::tuple,
+    IResult,
+};
 use serde::Serialize;
 
 use crate::{
+    entry::expression::parse_number,
+    symbol::{parse_constant_symbol, Symbol},
     util::ws,
-    KconfigInput, symbol::{Symbol, parse_constant_symbol}, entry::expression::parse_number,
 };
 
 use super::comment::parse_prompt_option;
@@ -12,11 +18,10 @@ use super::comment::parse_prompt_option;
 pub struct Int {
     pub prompt: String,
     pub symbol: Symbol,
-    pub default: Option<i64>
+    pub default: Option<i64>,
 }
 
-pub fn parse_int(input: KconfigInput) -> IResult<KconfigInput, Int> {
-    dbg!(&input);
+pub fn parse_int(input: &str) -> IResult<&str, Int> {
     map(
         tuple((
             ws(tag("int")),
@@ -27,7 +32,7 @@ pub fn parse_int(input: KconfigInput) -> IResult<KconfigInput, Int> {
         |(_, prompt, sym, default)| Int {
             prompt: prompt.to_string(),
             symbol: Symbol::Constant(sym.to_string()),
-            default
+            default,
         },
     )(input)
 }

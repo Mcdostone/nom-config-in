@@ -1,9 +1,10 @@
 use crate::{
     assert_parsing_eq,
-    entry::{bool::{Bool, parse_bool}, int::{Int, parse_int}},
+    entry::{
+        int::{parse_int, Int},
+    },
     symbol::Symbol,
 };
-
 
 #[test]
 fn test_parse_int() {

@@ -1,9 +1,14 @@
-use nom::{bytes::complete::tag, combinator::{map, opt}, sequence::tuple, IResult};
+use nom::{
+    bytes::complete::tag,
+    combinator::{map, opt},
+    sequence::tuple,
+    IResult,
+};
 use serde::Serialize;
 
 use crate::{
+    symbol::{parse_constant_symbol, Symbol},
     util::ws,
-    KconfigInput, symbol::{Symbol, parse_constant_symbol},
 };
 
 use super::comment::parse_prompt_option;
@@ -12,11 +17,10 @@ use super::comment::parse_prompt_option;
 pub struct Bool {
     pub prompt: String,
     pub symbol: Symbol,
-    pub default: Option<String>
+    pub default: Option<String>,
 }
 
-pub fn parse_bool(input: KconfigInput) -> IResult<KconfigInput, Bool> {
-    dbg!(&input);
+pub fn parse_bool(input: &str) -> IResult<&str, Bool> {
     map(
         tuple((
             ws(tag("bool")),
@@ -27,7 +31,7 @@ pub fn parse_bool(input: KconfigInput) -> IResult<KconfigInput, Bool> {
         |(_, prompt, sym, default)| Bool {
             prompt: prompt.to_string(),
             symbol: Symbol::Constant(sym.to_string()),
-            default
+            default,
         },
     )(input)
 }

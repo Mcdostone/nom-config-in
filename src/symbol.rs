@@ -10,8 +10,6 @@ use nom::{
 };
 use serde::Serialize;
 
-use crate::KconfigInput;
-
 use super::util::ws;
 
 /// There are two types of symbols: constant and non-constant symbols. Non-constant symbols are the most
@@ -31,25 +29,25 @@ impl Default for Symbol {
     }
 }
 
-pub fn parse_symbol(input: KconfigInput) -> IResult<KconfigInput, Symbol> {
+pub fn parse_symbol(input: &str) -> IResult<&str, Symbol> {
     alt((
         map(parse_constant_symbol, |c: &str| {
             Symbol::Constant(c.to_string())
         }),
         map(
             delimited(ws(char('"')), take_until("\""), char('"')),
-            |c: KconfigInput| Symbol::NonConstant(format!("\"{}\"", c)),
+            |c: &str| Symbol::NonConstant(format!("\"{}\"", c)),
         ),
         map(
             delimited(ws(char('\'')), take_until("'"), char('\'')),
-            |c: KconfigInput| Symbol::NonConstant(format!("'{}'", c)),
+            |c: &str| Symbol::NonConstant(format!("'{}'", c)),
         ),
     ))(input)
 }
 
-pub fn parse_constant_symbol(input: KconfigInput) -> IResult<KconfigInput, &str> {
+pub fn parse_constant_symbol(input: &str) -> IResult<&str, &str> {
     map(
         recognize(ws(many1(alt((alphanumeric1, recognize(one_of("_"))))))),
-        |c: KconfigInput| c.trim(),
+        |c: &str| c.trim(),
     )(input)
 }

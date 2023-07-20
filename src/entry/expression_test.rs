@@ -1,6 +1,10 @@
 use crate::{
     assert_parsing_eq,
-    symbol::Symbol, entry::expression::{parse_expression, OrExpression, Expression, Atom, AndExpression, Term, CompareExpression, CompareOperator},
+    entry::expression::{
+        parse_expression, AndExpression, Atom, CompareExpression, CompareOperator, Expression,
+        OrExpression, Term,
+    },
+    symbol::Symbol,
 };
 
 #[test]
@@ -86,4 +90,3 @@ fn test_parse_depends_on_optimization() {
             )
         ))))))
 }
-

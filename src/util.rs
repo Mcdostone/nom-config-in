@@ -11,8 +11,6 @@ use nom::{
     AsChar, Compare, IResult, InputIter, InputLength, InputTake, InputTakeAtPosition, Slice,
 };
 
-use crate::KconfigInput;
-
 pub fn ws_comment<I, E: ParseError<I>>(input: I) -> IResult<I, (), E>
 where
     I: Clone + InputLength + InputTake,
@@ -58,6 +56,6 @@ where
     preceded(ws_comment, inner)
 }
 
-pub fn parse_until_eol(input: KconfigInput) -> IResult<KconfigInput, KconfigInput> {
+pub fn parse_until_eol(input: &str) -> IResult<&str, &str> {
     terminated(not_line_ending, alt((line_ending, eof)))(input)
 }
