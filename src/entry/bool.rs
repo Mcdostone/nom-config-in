@@ -1,4 +1,5 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     combinator::{map, opt},
     sequence::tuple,
@@ -17,6 +18,7 @@ use super::comment::parse_prompt_option;
 pub struct Bool {
     pub prompt: String,
     pub symbol: Symbol,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub default: Option<String>,
 }
 
@@ -26,7 +28,7 @@ pub fn parse_bool(input: &str) -> IResult<&str, Bool> {
             ws(tag("bool")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            ws(opt(map(parse_constant_symbol, |s| s.to_string()))),
+            opt(map(parse_bool_value, |d: &str| d.to_string())),
         )),
         |(_, prompt, sym, default)| Bool {
             prompt: prompt.to_string(),
@@ -34,4 +36,8 @@ pub fn parse_bool(input: &str) -> IResult<&str, Bool> {
             default,
         },
     )(input)
+}
+
+pub fn parse_bool_value(input: &str) -> IResult<&str, &str> {
+    ws(alt((tag("y"), tag("n"))))(input)
 }

@@ -5,14 +5,14 @@ use crate::{
 
 #[test]
 fn test_parse_main_menu() {
-    let input = "mainmenu_option \"BPF subsystem\"";
+    let input = "mainmenu_option next_coment";
     assert_parsing_eq!(
         parse_main_menu_option,
         input,
         Ok((
             "",
             MainMenuOption {
-                value: "BPF subsystem".to_string(),
+                value: "next_coment".to_string(),
             }
         ))
     )

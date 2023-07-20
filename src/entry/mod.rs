@@ -15,6 +15,7 @@ use self::{
     main_menu::{parse_main_menu, MainMenu},
     main_menu_option::{parse_main_menu_option, MainMenuOption},
     r#if::{parse_if, If},
+    source::{parse_source, Source},
     tristate::{parse_tristate, Tristate},
 };
 
@@ -30,6 +31,7 @@ pub mod r#if;
 pub mod int;
 pub mod main_menu;
 pub mod main_menu_option;
+pub mod source;
 pub mod tristate;
 
 #[cfg(test)]
@@ -58,6 +60,8 @@ mod main_menu_test;
 #[cfg(test)]
 pub mod main_menu_option_test;
 #[cfg(test)]
+pub mod source_test;
+#[cfg(test)]
 pub mod tristate_test;
 
 #[derive(Debug, Serialize, Clone, PartialEq)]
@@ -72,6 +76,7 @@ pub enum Entry {
     MainMenu(MainMenu),
     MainMenuOption(MainMenuOption),
     Choice(Choice),
+    Source(Source),
     Tristate(Tristate),
     DefBool(DefBool),
 }
@@ -90,6 +95,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
         map(ws(parse_main_menu_option), Entry::MainMenuOption),
         map(ws(parse_choice), Entry::Choice),
         map(ws(parse_dep_tristate), Entry::DepTristate),
+        map(ws(parse_source), Entry::Source),
     ))(input)
 }
 

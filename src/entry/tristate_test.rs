@@ -14,7 +14,7 @@ fn test_parse_tristate() {
             Tristate {
                 prompt: "hello".to_string(),
                 symbol: "PCI".to_string(),
-                value: "y".to_string()
+                value: Some("y".to_string())
             }
         ))
     )

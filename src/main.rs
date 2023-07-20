@@ -27,6 +27,8 @@ pub struct Kconfig {
 }
 
 #[cfg(test)]
+pub mod config_test;
+#[cfg(test)]
 pub mod symbol_test;
 #[cfg(test)]
 pub mod util_test;
