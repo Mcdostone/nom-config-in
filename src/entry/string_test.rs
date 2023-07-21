@@ -1,8 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::{
-        string::{parse_string, StringConfig},
-    },
+    entry::string::{parse_string, StringConfig},
     symbol::Symbol,
 };
 

@@ -173,6 +173,7 @@ pub fn parse_compare_operator(input: &str) -> IResult<&str, CompareOperator> {
         value(CompareOperator::LowerOrEqual, tag("<=")),
         value(CompareOperator::GreaterThan, tag(">")),
         value(CompareOperator::LowerThan, tag("<")),
+        value(CompareOperator::Equal, tag("==")),
         value(CompareOperator::Equal, tag("=")),
         value(CompareOperator::NotEqual, tag("!=")),
     ))(input)
