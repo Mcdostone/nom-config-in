@@ -114,11 +114,11 @@ fn test_parse_if_else_backtick() {
                 )))),
                 if_block: vec!(Entry::DefBool(DefBool {
                     symbol: "CONFIG_CROSSCOMPILE".to_string(),
-                    value: "y".to_string()
+                    values: vec!("y".to_string())
                 })),
                 else_block: Some(vec!(Entry::DefBool(DefBool {
                     symbol: "CONFIG_NATIVE".to_string(),
-                    value: "y".to_string()
+                    values: vec!("y".to_string())
                 })))
             }
         ))

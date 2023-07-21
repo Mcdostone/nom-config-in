@@ -13,7 +13,7 @@ fn test_parse_def_bool() {
             "",
             DefBool {
                 symbol: "PCI".to_string(),
-                value: "y".to_string()
+                values: vec!("y".to_string())
             }
         ))
     )

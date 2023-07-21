@@ -20,7 +20,7 @@ use self::{
     source::{parse_source, Source},
     string::{parse_string, StringConfig},
     tristate::{parse_tristate, Tristate},
-    unset::{parse_unset, Unset},
+    unset::{parse_unset, Unset}, hex::{parse_hex, Hex},
 };
 
 pub mod bool;
@@ -38,10 +38,13 @@ pub mod int;
 pub mod main_menu_name;
 pub mod main_menu_option;
 pub mod source;
+pub mod hex;
 pub mod string;
 pub mod tristate;
 pub mod unset;
 
+#[cfg(test)]
+mod hex_test;
 #[cfg(test)]
 mod bool_test;
 #[cfg(test)]
@@ -89,6 +92,7 @@ pub enum Entry {
     Int(Int),
     Echo(Echo),
     EnvVariable(EnvVariable),
+    Hex(Hex),
     Unset(Unset),
     DepTristate(DepTristate),
     MainMenuName(MainMenuName),
@@ -112,6 +116,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
         map(ws(parse_echo), Entry::Echo),
         map(ws(parse_string), Entry::String),
         map(ws(parse_if), Entry::If),
+        map(ws(parse_hex), Entry::Hex),
         map(ws(parse_unset), Entry::Unset),
         map(ws(parse_comment), Entry::Comment),
         map(ws(parse_tristate), Entry::Tristate),

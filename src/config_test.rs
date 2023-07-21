@@ -22,7 +22,7 @@ fn test_parse_file() {
                 }),
                 Entry::DefBool(DefBool {
                     symbol: "CONFIG_PCI".to_string(),
-                    value: "y".to_string()
+                    values: vec!("y".to_string())
                 })
             )
         ))
