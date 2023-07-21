@@ -16,6 +16,7 @@ use super::{bool::parse_bool_value, comment::parse_prompt_option};
 pub struct Tristate {
     pub prompt: String,
     pub symbol: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub value: Option<String>,
 }
 

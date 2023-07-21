@@ -2,76 +2,21 @@
 # For a description of the syntax of this configuration file,
 # see the Configure script.
 #
-mainmenu_name "Kernel configuration of Linux for Alpha machines"
+mainmenu_name "Linux Kernel Configuration"
 
-mainmenu_option next_comment
-comment 'General setup'
 
-if [ "uname" != "Linux" ]; then
-  define_bool CONFIG_CROSSCOMPILE y
-else
-  define_bool CONFIG_NATIVE y
-fi
-
-choice 'Alpha system type' \
-	"Jensen		CONFIG_ALPHA_JENSEN		\
-	 Noname		CONFIG_ALPHA_NONAME		\
-	 Cabriolet	CONFIG_ALPHA_CABRIOLET		\
-	 EB66		CONFIG_ALPHA_EB66		\
-	 EB66+		CONFIG_ALPHA_EB66P		\
-	 EB64		CONFIG_ALPHA_EB64		\
-	 EB64+		CONFIG_ALPHA_EB64P" Cabriolet
-if [ "$CONFIG_ALPHA_NONAME" = "y" -o "$CONFIG_ALPHA_EB66" = "y" -o "$CONFIG_ALPHA_EB66P" = "y" ]
-then
-	define_bool CONFIG_PCI y
-	define_bool CONFIG_ALPHA_LCA y
-fi
-if [ "$CONFIG_ALPHA_CABRIOLET" = "y" -o "$CONFIG_ALPHA_EB64" = "y" -o "$CONFIG_ALPHA_EB64P" = "y" ];then
-	bool 'Using SRM as bootloader' CONFIG_ALPHA_SRM
-	define_bool CONFIG_PCI y
-	define_bool CONFIG_ALPHA_APECS y
-fi
-
-if [ "$CONFIG_PCI" = "y" ]; then
-  bool '   PCI bridge optimisation (experimental)' CONFIG_PCI_OPTIMIZE
-fi
 bool 'Networking support' CONFIG_NET
-bool 'System V IPC' CONFIG_SYSVIPC
-tristate 'Kernel support for ELF binaries' CONFIG_BINFMT_ELF
-
-mainmenu_option next_comment
-comment 'Loadable module support'
-bool 'Set version information on all symbols for modules' CONFIG_MODVERSIONS
-
-
-if [ "$CONFIG_NET" = "y" ]; then
-  source net/Config.in
-fi
-
-mainmenu_option next_comment
-comment 'SCSI support'
-
-tristate 'SCSI support' CONFIG_SCSI
-
-if [ "$CONFIG_SCSI" != "n" ]; then
-  source drivers/scsi/Config.in
-fi
-
-if [ "$CONFIG_NET" = "y" ]; then
-  mainmenu_option next_comment
-  comment 'Network device support'
-
-  bool 'Network device support' CONFIG_NETDEVICES
-  if [ "$CONFIG_NETDEVICES" = "y" ]; then
-    source drivers/net/Config.in
+bool 'PCI support' CONFIG_PCI
+if [ "$CONFIG_PCI" = "y" ]; then
+  bool '   PCI BIOS support' CONFIG_PCI_BIOS
+  bool '   PCI direct access support' CONFIG_PCI_DIRECT
+  if [ "$CONFIG_PCI_BIOS" = "n" -a "$CONFIG_PCI_DIRECT" = "n" ]; then
+    define_bool CONFIG_PCI_BIOS "y"
   fi
-fi
-
-mainmenu_option next_comment
-comment 'CD-ROM drivers (not for SCSI or IDE/ATAPI drives)'
-
-bool 'Support non-SCSI/IDE/ATAPI drives' CONFIG_CD_NO_IDESCSI
-if [ "$CONFIG_CD_NO_IDESCSI" != "n" ]; then
-  source drivers/cdrom/Config.in
+  bool '   PCI quirks' CONFIG_PCI_QUIRKS
+  if [ "$CONFIG_PCI_QUIRKS" = "y" -a "$CONFIG_EXPERIMENTAL" = "y" ]; then
+    bool '   PCI bridge optimization (experimental)' CONFIG_PCI_OPTIMIZE
+  fi
+  bool '   Backward-compatible /proc/pci' CONFIG_PCI_OLD_PROC
 fi
 

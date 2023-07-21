@@ -1,8 +1,9 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
+    character::complete::space0,
     combinator::{map, opt},
-    sequence::tuple,
+    sequence::{preceded, tuple},
     IResult,
 };
 use serde::Serialize;
@@ -39,5 +40,9 @@ pub fn parse_bool(input: &str) -> IResult<&str, Bool> {
 }
 
 pub fn parse_bool_value(input: &str) -> IResult<&str, &str> {
-    ws(alt((tag("y"), tag("n"))))(input)
+    alt((
+        ws(alt((tag("y"), tag("n")))),
+        ws(alt((tag("\"y\""), tag("\"n\"")))),
+        preceded(space0, parse_constant_symbol),
+    ))(input)
 }

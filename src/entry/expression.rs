@@ -139,7 +139,10 @@ pub fn parse_and_expression(input: &str) -> IResult<&str, AndExpression> {
 
 pub fn parse_term(input: &str) -> IResult<&str, Term> {
     alt((
-        map(preceded(ws(tag("!")), parse_atom), Term::Not),
+        map(
+            preceded(ws(alt((tag("-n"), tag("!")))), parse_atom),
+            Term::Not,
+        ),
         map(parse_atom, Term::Atom),
     ))(input)
 }
@@ -150,13 +153,13 @@ pub fn parse_atom(input: &str) -> IResult<&str, Atom> {
         map(delimited(tag("\""), parse_atom, tag("\"")), |d| {
             Atom::String(Box::new(d))
         }),
+        map(parse_number, Atom::Number),
         map(parse_symbol, Atom::Symbol),
         map(
             delimited(ws(tag("(")), parse_expression, ws(tag(")"))),
             |expr| Atom::Parenthesis(Box::new(expr)),
         ),
         map(parse_symbol, Atom::Symbol),
-        map(parse_number, Atom::Number),
     ))(input)
 }
 
