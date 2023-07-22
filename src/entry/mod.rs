@@ -8,13 +8,17 @@ use self::{
     choice::{parse_choice, Choice},
     comment::{parse_comment, Comment},
     def_bool::{parse_def_bool, DefBool},
+    define::{parse_define, Define},
+    define_hex::{parse_define_hex, DefineHex},
     define_int::{parse_define_int, DefineInt},
     define_tristate::{parse_define_tristate, DefineTristate},
+    dep_bool::{parse_dep_bool, DepBool},
     dep_tristate::{parse_dep_tristate, DepTristate},
     echo::{parse_echo, Echo},
     env_variable::{parse_env_variable, EnvVariable},
     exec::{parse_exec, Exec},
     hex::{parse_hex, Hex},
+    hwaddr::{parse_hwaddr, Hwaddr},
     int::{parse_int, Int},
     main_menu_name::{parse_main_menu_name, MainMenuName},
     main_menu_option::{parse_main_menu, parse_main_menu_option, MainMenu, MainMenuOption},
@@ -29,14 +33,18 @@ pub mod bool;
 pub mod choice;
 pub mod comment;
 pub mod def_bool;
+pub mod define;
+pub mod define_hex;
 pub mod define_int;
 pub mod define_tristate;
+pub mod dep_bool;
 pub mod dep_tristate;
 pub mod echo;
 pub mod env_variable;
 pub mod exec;
 pub mod expression;
 pub mod hex;
+pub mod hwaddr;
 pub mod r#if;
 pub mod int;
 pub mod main_menu_name;
@@ -55,9 +63,15 @@ mod comment_test;
 #[cfg(test)]
 mod def_bool_test;
 #[cfg(test)]
+mod define_hex_test;
+#[cfg(test)]
 mod define_int_test;
 #[cfg(test)]
+mod define_test;
+#[cfg(test)]
 mod define_tristate_test;
+#[cfg(test)]
+mod dep_bool_test;
 #[cfg(test)]
 pub mod dep_tristate_test;
 #[cfg(test)]
@@ -70,6 +84,8 @@ pub mod exec_test;
 pub mod expression_test;
 #[cfg(test)]
 mod hex_test;
+#[cfg(test)]
+mod hwaddr_test;
 #[cfg(test)]
 pub mod if_test;
 #[cfg(test)]
@@ -93,6 +109,7 @@ pub enum Entry {
     Comment(Comment),
     If(If),
     Bool(Bool),
+    DepBool(DepBool),
     Exec(Exec),
     Int(Int),
     Echo(Echo),
@@ -108,16 +125,24 @@ pub enum Entry {
     Choice(Choice),
     Source(Source),
     Tristate(Tristate),
+    DefineHex(DefineHex),
     DefBool(DefBool),
     MainMenu(MainMenu),
+    Define(Define),
+    Hwaddr(Hwaddr),
 }
 
 pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
     alt((
-        map(ws(parse_bool), Entry::Bool),
-        map(ws(parse_int), Entry::Int),
+        alt((
+            map(ws(parse_define_hex), Entry::DefineHex),
+            map(ws(parse_bool), Entry::Bool),
+            map(ws(parse_int), Entry::Int),
+            map(ws(parse_hwaddr), Entry::Hwaddr),
+        )),
         map(ws(parse_exec), Entry::Exec),
         map(ws(parse_def_bool), Entry::DefBool),
+        map(ws(parse_dep_bool), Entry::DepBool),
         map(ws(parse_define_int), Entry::DefineInt),
         map(ws(parse_define_tristate), Entry::DefineTristate),
         map(ws(parse_echo), Entry::Echo),
@@ -134,6 +159,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
         map(ws(parse_env_variable), Entry::EnvVariable),
         map(ws(parse_dep_tristate), Entry::DepTristate),
         map(ws(parse_source), Entry::Source),
+        map(ws(parse_define), Entry::Define),
     ))(input)
 }
 

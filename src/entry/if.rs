@@ -20,7 +20,7 @@ pub fn parse_if(input: &str) -> IResult<&str, If> {
             ws(parse_if_condition),
             many0(parse_entry),
             opt(parse_else),
-            ws(tag("fi")),
+            ws(opt(tag("fi"))),
         )),
         |(condition, entries, e, _)| If {
             condition,
