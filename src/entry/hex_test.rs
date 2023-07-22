@@ -1,6 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::{bool::{parse_bool, Bool}, hex::{parse_hex, Hex}},
+    entry::hex::{parse_hex, Hex},
     symbol::Symbol,
 };
 

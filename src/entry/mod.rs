@@ -9,10 +9,12 @@ use self::{
     comment::{parse_comment, Comment},
     def_bool::{parse_def_bool, DefBool},
     define_int::{parse_define_int, DefineInt},
+    define_tristate::{parse_define_tristate, DefineTristate},
     dep_tristate::{parse_dep_tristate, DepTristate},
     echo::{parse_echo, Echo},
     env_variable::{parse_env_variable, EnvVariable},
     exec::{parse_exec, Exec},
+    hex::{parse_hex, Hex},
     int::{parse_int, Int},
     main_menu_name::{parse_main_menu_name, MainMenuName},
     main_menu_option::{parse_main_menu, parse_main_menu_option, MainMenu, MainMenuOption},
@@ -20,7 +22,7 @@ use self::{
     source::{parse_source, Source},
     string::{parse_string, StringConfig},
     tristate::{parse_tristate, Tristate},
-    unset::{parse_unset, Unset}, hex::{parse_hex, Hex},
+    unset::{parse_unset, Unset},
 };
 
 pub mod bool;
@@ -28,23 +30,22 @@ pub mod choice;
 pub mod comment;
 pub mod def_bool;
 pub mod define_int;
+pub mod define_tristate;
 pub mod dep_tristate;
 pub mod echo;
 pub mod env_variable;
 pub mod exec;
 pub mod expression;
+pub mod hex;
 pub mod r#if;
 pub mod int;
 pub mod main_menu_name;
 pub mod main_menu_option;
 pub mod source;
-pub mod hex;
 pub mod string;
 pub mod tristate;
 pub mod unset;
 
-#[cfg(test)]
-mod hex_test;
 #[cfg(test)]
 mod bool_test;
 #[cfg(test)]
@@ -56,6 +57,8 @@ mod def_bool_test;
 #[cfg(test)]
 mod define_int_test;
 #[cfg(test)]
+mod define_tristate_test;
+#[cfg(test)]
 pub mod dep_tristate_test;
 #[cfg(test)]
 mod echo_test;
@@ -65,6 +68,8 @@ mod env_variable_test;
 pub mod exec_test;
 #[cfg(test)]
 pub mod expression_test;
+#[cfg(test)]
+mod hex_test;
 #[cfg(test)]
 pub mod if_test;
 #[cfg(test)]
@@ -95,6 +100,7 @@ pub enum Entry {
     Hex(Hex),
     Unset(Unset),
     DepTristate(DepTristate),
+    DefineTristate(DefineTristate),
     MainMenuName(MainMenuName),
     DefineInt(DefineInt),
     String(StringConfig),
@@ -113,6 +119,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
         map(ws(parse_exec), Entry::Exec),
         map(ws(parse_def_bool), Entry::DefBool),
         map(ws(parse_define_int), Entry::DefineInt),
+        map(ws(parse_define_tristate), Entry::DefineTristate),
         map(ws(parse_echo), Entry::Echo),
         map(ws(parse_string), Entry::String),
         map(ws(parse_if), Entry::If),

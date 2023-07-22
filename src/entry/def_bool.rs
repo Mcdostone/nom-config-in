@@ -1,4 +1,4 @@
-use nom::{bytes::complete::tag, combinator::map, sequence::tuple, IResult, multi::many1};
+use nom::{bytes::complete::tag, combinator::map, multi::many1, sequence::tuple, IResult};
 use serde::Serialize;
 
 use crate::{symbol::parse_constant_symbol, util::ws};

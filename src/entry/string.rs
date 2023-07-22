@@ -1,8 +1,6 @@
-
-
 use nom::{
     branch::alt,
-    bytes::complete::{tag},
+    bytes::complete::tag,
     character::complete::{line_ending, not_line_ending, space0},
     combinator::{eof, map, opt},
     sequence::{preceded, terminated, tuple},
