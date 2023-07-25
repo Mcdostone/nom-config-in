@@ -27,7 +27,7 @@ pub fn parse_source(input: &str) -> IResult<&str, Source> {
 
 pub fn parse_path(input: &str) -> IResult<&str, &str> {
     map(
-        recognize(ws(many1(alt((alphanumeric1, recognize(one_of("_/."))))))),
+        recognize(ws(many1(alt((alphanumeric1, recognize(one_of("_-/."))))))),
         |c: &str| c.trim(),
     )(input)
 }

@@ -11,6 +11,7 @@ use self::{
     define::{parse_define, Define},
     define_hex::{parse_define_hex, DefineHex},
     define_int::{parse_define_int, DefineInt},
+    define_string::{parse_define_string, DefineString},
     define_tristate::{parse_define_tristate, DefineTristate},
     dep_bool::{parse_dep_bool, DepBool},
     dep_tristate::{parse_dep_tristate, DepTristate},
@@ -36,6 +37,7 @@ pub mod def_bool;
 pub mod define;
 pub mod define_hex;
 pub mod define_int;
+pub mod define_string;
 pub mod define_tristate;
 pub mod dep_bool;
 pub mod dep_tristate;
@@ -66,6 +68,8 @@ mod def_bool_test;
 mod define_hex_test;
 #[cfg(test)]
 mod define_int_test;
+#[cfg(test)]
+mod define_string_test;
 #[cfg(test)]
 mod define_test;
 #[cfg(test)]
@@ -130,6 +134,7 @@ pub enum Entry {
     MainMenu(MainMenu),
     Define(Define),
     Hwaddr(Hwaddr),
+    DefineString(DefineString),
 }
 
 pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
@@ -138,6 +143,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
             map(ws(parse_define_hex), Entry::DefineHex),
             map(ws(parse_bool), Entry::Bool),
             map(ws(parse_int), Entry::Int),
+            map(ws(parse_define_string), Entry::DefineString),
             map(ws(parse_hwaddr), Entry::Hwaddr),
         )),
         map(ws(parse_exec), Entry::Exec),

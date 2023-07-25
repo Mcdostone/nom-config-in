@@ -1,6 +1,6 @@
 use nom::{
     bytes::complete::tag,
-    character::complete::space0,
+    character::complete::space1,
     combinator::map,
     multi::many1,
     sequence::{preceded, tuple},
@@ -25,9 +25,9 @@ pub fn parse_dep_bool(input: &str) -> IResult<&str, DepBool> {
             ws(tag("dep_bool")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            ws(preceded(
-                space0,
-                many1(map(parse_constant_symbol, |d| d.to_string())),
+            many1(preceded(
+                space1,
+                map(parse_constant_symbol, |d| d.to_string()),
             )),
         )),
         |(_, p, e, i)| DepBool {

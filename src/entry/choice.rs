@@ -1,8 +1,9 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     combinator::map,
     multi::many1,
-    sequence::{delimited, tuple},
+    sequence::{delimited, pair, tuple},
     IResult,
 };
 use serde::Serialize;
@@ -23,15 +24,23 @@ fn parse_choice_option(input: &str) -> IResult<&str, ChoiceOption> {
 
 pub fn parse_choice(input: &str) -> IResult<&str, Choice> {
     let (input, prompt) = tuple((ws(tag("choice")), ws(parse_prompt_option)))(input)?;
-    let (input, options) =
-        delimited(ws(tag("\"")), many1(ws(parse_choice_option)), ws(tag("\"")))(input)?;
-    let (input, def) = ws(parse_constant_symbol)(input)?;
+    let (input, ok): (&str, (Vec<ChoiceOption>, &str)) = alt((
+        pair(
+            delimited(ws(tag("\"")), many1(ws(parse_choice_option)), ws(tag("\""))),
+            ws(parse_constant_symbol),
+        ),
+        delimited(
+            ws(tag("\"")),
+            pair(many1(ws(parse_choice_option)), ws(parse_constant_symbol)),
+            ws(tag("\"")),
+        ),
+    ))(input)?;
     Ok((
         input,
         Choice {
             prompt: prompt.1.to_string(),
-            entries: options,
-            default: def.to_string(),
+            entries: ok.0,
+            default: ok.1.to_string(),
         },
     ))
 }

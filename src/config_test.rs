@@ -1,8 +1,7 @@
 use crate::{
     assert_parsing_eq,
-    config::parse_config,
     entry::{bool::Bool, def_bool::DefBool, Entry},
-    symbol::Symbol,
+    symbol::Symbol, config::parse_config,
 };
 
 #[test]

@@ -2,7 +2,7 @@ use nom::{
     bytes::complete::tag,
     combinator::{map, opt},
     multi::many0,
-    sequence::{delimited, preceded, tuple},
+    sequence::{preceded, tuple},
     IResult,
 };
 use serde::Serialize;
@@ -42,7 +42,7 @@ pub fn parse_if_condition(input: &str) -> IResult<&str, Expression> {
     map(
         tuple((
             ws(tag("if")),
-            ws(delimited(tag("["), ws(parse_expression), ws(tag("]")))),
+            ws(ws(parse_expression)),
             opt(ws(tag(";"))),
             opt(ws(tag("then"))),
         )),

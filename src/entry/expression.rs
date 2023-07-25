@@ -105,7 +105,10 @@ pub fn parse_or_expression(input: &str) -> IResult<&str, OrExpression> {
     map(
         tuple((
             ws(parse_and_expression),
-            many0(preceded(ws(tag("-o")), ws(parse_and_expression))),
+            many0(preceded(
+                alt((ws(tag("-o")), ws(tag("||")))),
+                ws(parse_and_expression),
+            )),
         )),
         |(l, ee)| {
             if ee.is_empty() {
@@ -156,7 +159,7 @@ pub fn parse_atom(input: &str) -> IResult<&str, Atom> {
         map(parse_number, Atom::Number),
         map(parse_symbol, Atom::Symbol),
         map(
-            delimited(ws(tag("(")), parse_expression, ws(tag(")"))),
+            delimited(ws(tag("[")), parse_expression, ws(tag("]"))),
             |expr| Atom::Parenthesis(Box::new(expr)),
         ),
         map(parse_symbol, Atom::Symbol),
