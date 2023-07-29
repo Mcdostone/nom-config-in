@@ -1,7 +1,9 @@
 use crate::{
     assert_parsing_eq,
-    entry::define_int::{parse_define_int, DefineInt},
-    symbol::Symbol,
+    entry::{
+        define_int::{parse_define_int},
+        DefineType,
+    },
 };
 
 #[test]
@@ -12,9 +14,9 @@ fn test_parse_int() {
         input,
         Ok((
             "",
-            DefineInt {
-                symbol: Symbol::Constant("CONFIG_MAX_MEMSIZE".to_string()),
-                default: Some(2048)
+            DefineType {
+                symbol: "CONFIG_MAX_MEMSIZE".to_string(),
+                value: Some(2048)
             }
         ))
     )

@@ -16,12 +16,10 @@ pub struct Comment {
     pub prompt: String,
 }
 
-pub fn parse_comment(input: &str) -> IResult<&str, Comment> {
+pub fn parse_comment(input: &str) -> IResult<&str, String> {
     map(
         tuple((ws(tag("comment")), ws(parse_prompt_option))),
-        |(_, prompt)| Comment {
-            prompt: prompt.to_string(),
-        },
+        |(_, prompt)| prompt.to_string(),
     )(input)
 }
 

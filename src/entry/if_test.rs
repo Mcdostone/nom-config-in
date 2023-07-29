@@ -1,14 +1,12 @@
 use crate::{
     entry::{
-        bool::Bool,
-        comment::Comment,
         def_bool::DefBool,
         expression::{
             AndExpression, Atom, CompareExpression, CompareOperator, Expression, OrExpression, Term,
         },
         r#if::{parse_if, If},
+        r#type::Type,
     },
-    symbol::Symbol,
     Entry,
 };
 
@@ -25,15 +23,17 @@ fn test_parse_if_entry() {
             "",
             If {
                 condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Compare(CompareExpression {
-                        left: Symbol::NonConstant("\"$CONFIG_SCSI\"".to_string()),
-                        operator: CompareOperator::Equal,
-                        right: Symbol::NonConstant("\"n\"".to_string())
-                    })
+                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"$CONFIG_SCSI\"".to_string(),
+                            operator: CompareOperator::Equal,
+                            right: "\"n\"".to_string()
+                        })))
+                    ))))
                 )))),
-                if_block: vec!(Entry::Comment(Comment {
-                    prompt: "Skipping SCSI configuration options...".to_string()
-                })),
+                if_block: vec!(Entry::Comment(
+                    "Skipping SCSI configuration options...".to_string()
+                )),
                 else_block: None
             }
         ))
@@ -51,15 +51,17 @@ fn test_parse_if_entry_quote_operator() {
             "",
             If {
                 condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Compare(CompareExpression {
-                        left: Symbol::NonConstant("\"$CONFIG_SCSI\"".to_string()),
-                        operator: CompareOperator::Equal,
-                        right: Symbol::NonConstant("\"n\"".to_string())
-                    })
+                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"$CONFIG_SCSI\"".to_string(),
+                            operator: CompareOperator::Equal,
+                            right: "\"n\"".to_string()
+                        })))
+                    ))))
                 )))),
-                if_block: vec!(Entry::Comment(Comment {
-                    prompt: "Skipping SCSI configuration options...".to_string()
-                })),
+                if_block: vec!(Entry::Comment(
+                    "Skipping SCSI configuration options...".to_string()
+                )),
                 else_block: None
             }
         ))
@@ -77,19 +79,21 @@ fn test_parse_if_else_entry() {
             "",
             If {
                 condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Compare(CompareExpression {
-                        left: Symbol::NonConstant("\"$CONFIG_SCSI\"".to_string()),
-                        operator: CompareOperator::Equal,
-                        right: Symbol::NonConstant("\"n\"".to_string())
-                    })
+                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"$CONFIG_SCSI\"".to_string(),
+                            operator: CompareOperator::Equal,
+                            right: "\"n\"".to_string()
+                        })))
+                    ))))
                 )))),
-                if_block: vec!(Entry::Comment(Comment {
-                    prompt: "Skipping SCSI configuration options...".to_string()
-                })),
-                else_block: Some(vec!(Entry::Bool(Bool {
-                    symbol: Symbol::Constant("CONFIG_BLK_DEV_SD".to_string()),
+                if_block: vec!(Entry::Comment(
+                    "Skipping SCSI configuration options...".to_string()
+                )),
+                else_block: Some(vec!(Entry::Bool(Type {
+                    symbol: "CONFIG_BLK_DEV_SD".to_string(),
                     prompt: "Scsi disk support".to_string(),
-                    default: Some("y".to_string())
+                    value: Some("y".to_string())
                 })))
             }
         ))
@@ -106,11 +110,13 @@ fn test_parse_if_else_backtick() {
             "",
             If {
                 condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Compare(CompareExpression {
-                        left: Symbol::NonConstant("\"`uname`\"".to_string()),
-                        operator: CompareOperator::NotEqual,
-                        right: Symbol::NonConstant("\"Linux\"".to_string())
-                    })
+                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"`uname`\"".to_string(),
+                            operator: CompareOperator::NotEqual,
+                            right: "\"Linux\"".to_string()
+                        })))
+                    ))))
                 )))),
                 if_block: vec!(Entry::DefBool(DefBool {
                     symbol: "CONFIG_CROSSCOMPILE".to_string(),

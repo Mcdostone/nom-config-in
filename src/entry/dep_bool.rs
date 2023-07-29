@@ -16,7 +16,7 @@ use super::comment::parse_prompt_option;
 pub struct DepBool {
     pub prompt: String,
     pub symbol: String,
-    pub select: Vec<String>,
+    pub depends_on: Vec<String>,
 }
 
 pub fn parse_dep_bool(input: &str) -> IResult<&str, DepBool> {
@@ -30,10 +30,10 @@ pub fn parse_dep_bool(input: &str) -> IResult<&str, DepBool> {
                 map(parse_constant_symbol, |d| d.to_string()),
             )),
         )),
-        |(_, p, e, i)| DepBool {
+        |(_, p, e, depends_on)| DepBool {
             prompt: p.to_string(),
             symbol: e.to_string(),
-            select: i,
+            depends_on,
         },
     )(input)
 }

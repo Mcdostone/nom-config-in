@@ -1,5 +1,3 @@
-
-
 use entry::Entry;
 
 use nom::{
@@ -11,12 +9,11 @@ use nom::{
 use serde::Serialize;
 use util::ws;
 
-
 use crate::{entry::parse_entry, util::ws_comment};
 
+pub mod config;
 pub mod entry;
 pub mod symbol;
-pub mod config;
 pub mod util;
 
 #[cfg(test)]

@@ -1,7 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::define_string::{parse_define_string, DefineString},
-    symbol::Symbol,
+    entry::{define_string::parse_define_string, DefineType},
 };
 
 #[test]
@@ -12,9 +11,9 @@ fn test_parse_string() {
         input,
         Ok((
             "",
-            DefineString {
-                symbol: Symbol::Constant("CONFIG_COMPILE_OPTIONS".to_string()),
-                value: "-g".to_string()
+            DefineType {
+                symbol: "CONFIG_COMPILE_OPTIONS".to_string(),
+                value: Some("-g".to_string())
             }
         ))
     )

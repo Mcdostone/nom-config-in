@@ -4,7 +4,6 @@ use crate::{
         parse_expression, AndExpression, Atom, CompareExpression, CompareOperator, Expression,
         OrExpression, Term,
     },
-    symbol::Symbol,
 };
 
 #[test]
@@ -29,7 +28,7 @@ fn test_parse_term() {
         Ok((
             "",
             Expression(OrExpression::Term(AndExpression::Term(Term::Not(
-                Atom::Symbol(Symbol::Constant("KVM".to_string()))
+                Atom::Symbol("KVM".to_string())
             ))))
         ))
     )
@@ -43,8 +42,8 @@ fn test_parse_depends_on_and() {
         Ok((
             "",
             Expression(OrExpression::Term(AndExpression::Expression(vec!(
-                Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_MIATA".to_string()))),
-                Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_LX164".to_string()))),
+                Term::Atom(Atom::Symbol("ALPHA_MIATA".to_string())),
+                Term::Atom(Atom::Symbol("ALPHA_LX164".to_string())),
             ))))
         ))
     )
@@ -58,12 +57,10 @@ fn test_parse_depends_on_ambigus() {
         Ok((
             "",
             Expression(OrExpression::Expression(vec!(
-                AndExpression::Term(Term::Atom(Atom::Symbol(Symbol::Constant(
-                    "ALPHA_MIATA".to_string()
-                )))),
+                AndExpression::Term(Term::Atom(Atom::Symbol("ALPHA_MIATA".to_string()))),
                 AndExpression::Expression(vec!(
-                    Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_LX164".to_string()))),
-                    Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_SX164".to_string()))),
+                    Term::Atom(Atom::Symbol("ALPHA_LX164".to_string())),
+                    Term::Atom(Atom::Symbol("ALPHA_SX164".to_string())),
                 ))
             )))
         ))
@@ -77,16 +74,18 @@ fn test_parse_depends_on_optimization() {
         "ALPHA_MIATA -o ALPHA_LX164 -a ALPHA_SX164 -a (HELLO = world) -o ALPHA_SX164 -a (HELLO = world)",
         Ok(("", Expression(OrExpression::Expression(
             vec!(
-                AndExpression::Term(Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_MIATA".to_string())))),
+                AndExpression::Term(Term::Atom(Atom::Symbol("ALPHA_MIATA".to_string()))),
                 AndExpression::Expression(vec!(
-                    Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_LX164".to_string()))),
-                    Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_SX164".to_string()))),
-                    Term::Atom(Atom::Parenthesis(Box::new(Expression(OrExpression::Term(AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression { left: Symbol::Constant("HELLO".to_string()), operator: CompareOperator::Equal, right: Symbol::Constant("world".to_string()) }))))))),
-                ))),
+                    Term::Atom(Atom::Symbol("ALPHA_LX164".to_string())),
+                    Term::Atom(Atom::Symbol("ALPHA_SX164".to_string())),
+                    Term::Atom(Atom::Parenthesis(Box::new(Expression(OrExpression::Term(AndExpression::Term(Term::Atom(Atom::Compare(
+                        CompareExpression { left: "HELLO".to_string(), operator: CompareOperator::Equal, right: "world".to_string() }
+                    )))))))),
+                )),
                 AndExpression::Expression(vec!(
-                    Term::Atom(Atom::Symbol(Symbol::Constant("ALPHA_SX164".to_string()))),
-                    Term::Atom(Atom::Parenthesis(Box::new(Expression(OrExpression::Term(AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression { left: Symbol::Constant("HELLO".to_string()), operator: CompareOperator::Equal, right: Symbol::Constant("world".to_string())}))))))))
-                )
+                    Term::Atom(Atom::Symbol("ALPHA_SX164".to_string())),
+                    Term::Atom(Atom::Parenthesis(Box::new(Expression(OrExpression::Term(AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression { left: "HELLO".to_string(), operator: CompareOperator::Equal, right: "world".to_string()}))))))))
+                ))
             )
-        ))))))
+        )))))
 }

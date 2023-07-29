@@ -17,7 +17,7 @@ pub struct DepTristate {
     pub symbol: String,
     pub value: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub other: Option<String>,
+    pub depends_on: Option<String>,
 }
 
 pub fn parse_dep_tristate(input: &str) -> IResult<&str, DepTristate> {
@@ -32,11 +32,11 @@ pub fn parse_dep_tristate(input: &str) -> IResult<&str, DepTristate> {
                 map(parse_constant_symbol, |d| d.to_string()),
             )),
         )),
-        |(_, p, e, i, o)| DepTristate {
+        |(_, p, e, i, depends_on)| DepTristate {
             prompt: p.to_string(),
             symbol: e.to_string(),
             value: i.to_string(),
-            other: o,
+            depends_on,
         },
     )(input)
 }

@@ -1,7 +1,6 @@
 use crate::{
     assert_parsing_eq,
     entry::int::{parse_int, Int},
-    symbol::Symbol,
 };
 
 #[test]
@@ -13,9 +12,9 @@ fn test_parse_int() {
         Ok((
             "",
             Int {
-                symbol: Symbol::Constant("NR_FTAPE_BUFFERS".to_string()),
+                symbol: "NR_FTAPE_BUFFERS".to_string(),
                 prompt: "number of ftape buffers".to_string(),
-                default: Some(3),
+                value: Some(3),
                 range: Default::default()
             }
         ))

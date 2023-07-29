@@ -1,7 +1,7 @@
 use crate::{
     assert_parsing_eq,
-    entry::{bool::Bool, def_bool::DefBool, Entry},
-    symbol::Symbol, config::parse_config,
+    config::parse_config,
+    entry::{def_bool::DefBool, r#type::Type, Entry},
 };
 
 #[test]
@@ -14,10 +14,10 @@ fn test_parse_file() {
         Ok((
             "",
             vec!(
-                Entry::Bool(Bool {
+                Entry::Bool(Type {
                     prompt: "Using SRM as bootloader".to_string(),
-                    symbol: Symbol::Constant("CONFIG_ALPHA_SRM".to_string()),
-                    default: None
+                    symbol: "CONFIG_ALPHA_SRM".to_string(),
+                    value: None
                 }),
                 Entry::DefBool(DefBool {
                     symbol: "CONFIG_PCI".to_string(),

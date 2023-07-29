@@ -4,31 +4,21 @@ use nom::{
     sequence::tuple,
     IResult,
 };
-use serde::Serialize;
 
-use crate::{
-    symbol::{parse_constant_symbol, Symbol},
-    util::ws,
-};
 
-use super::hex::parse_hex_value;
+use crate::{symbol::parse_constant_symbol, util::ws};
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
-pub struct DefineHex {
-    pub symbol: Symbol,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<String>,
-}
+use super::{hex::parse_hex_value, DefineType};
 
-pub fn parse_define_hex(input: &str) -> IResult<&str, DefineHex> {
+pub fn parse_define_hex(input: &str) -> IResult<&str, DefineType<String>> {
     map(
         tuple((
             ws(tag("define_hex")),
             ws(parse_constant_symbol),
             opt(map(parse_hex_value, |d: &str| d.to_string())),
         )),
-        |(_, sym, value)| DefineHex {
-            symbol: Symbol::Constant(sym.to_string()),
+        |(_, sym, value)| DefineType {
+            symbol: sym.to_string(),
             value,
         },
     )(input)

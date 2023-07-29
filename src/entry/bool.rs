@@ -6,24 +6,16 @@ use nom::{
     sequence::{preceded, tuple},
     IResult,
 };
-use serde::Serialize;
+
 
 use crate::{
-    symbol::{parse_constant_symbol, Symbol},
+    symbol::{parse_constant_symbol},
     util::ws,
 };
 
-use super::comment::parse_prompt_option;
+use super::{comment::parse_prompt_option, r#type::Type};
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
-pub struct Bool {
-    pub prompt: String,
-    pub symbol: Symbol,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub default: Option<String>,
-}
-
-pub fn parse_bool(input: &str) -> IResult<&str, Bool> {
+pub fn parse_bool(input: &str) -> IResult<&str, Type<String>> {
     map(
         tuple((
             ws(tag("bool")),
@@ -31,10 +23,10 @@ pub fn parse_bool(input: &str) -> IResult<&str, Bool> {
             ws(parse_constant_symbol),
             opt(map(parse_bool_value, |d: &str| d.to_string())),
         )),
-        |(_, prompt, sym, default)| Bool {
+        |(_, prompt, sym, value)| Type {
             prompt: prompt.to_string(),
-            symbol: Symbol::Constant(sym.to_string()),
-            default,
+            symbol: sym.to_string(),
+            value,
         },
     )(input)
 }

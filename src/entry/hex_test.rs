@@ -1,7 +1,6 @@
 use crate::{
     assert_parsing_eq,
     entry::hex::{parse_hex, Hex},
-    symbol::Symbol,
 };
 
 #[test]
@@ -13,7 +12,7 @@ fn test_parse_hex() {
         Ok((
             "",
             Hex {
-                symbol: Symbol::Constant("CONFIG_MEMORY_START".to_string()),
+                symbol: "CONFIG_MEMORY_START".to_string(),
                 prompt: "Physical memory start address".to_string(),
                 value: Some("0c000000".to_string())
             }

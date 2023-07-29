@@ -20,7 +20,7 @@ pub struct Int {
     pub prompt: String,
     pub symbol: Symbol,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub default: Option<i64>,
+    pub value: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub range: Option<(i64, i64)>,
 }
@@ -34,11 +34,11 @@ pub fn parse_int(input: &str) -> IResult<&str, Int> {
             ws(opt(map(parse_number, |s| s))),
             opt(preceded(space1, parse_range)),
         )),
-        |(_, prompt, sym, default, range)| Int {
+        |(_, prompt, sym, value, range)| Int {
             prompt: prompt.to_string(),
-            symbol: Symbol::Constant(sym.to_string()),
+            symbol: sym.to_string(),
             range,
-            default,
+            value,
         },
     )(input)
 }

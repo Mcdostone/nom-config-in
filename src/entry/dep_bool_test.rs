@@ -14,7 +14,7 @@ fn test_parse_dep_bool() {
             DepBool {
                 prompt: "ACPI support".to_string(),
                 symbol: "CONFIG_ACPI".to_string(),
-                select: vec!("$CONFIG_PM".to_string())
+                depends_on: vec!("$CONFIG_PM".to_string())
             }
         ))
     )

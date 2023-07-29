@@ -1,7 +1,9 @@
 use crate::{
     assert_parsing_eq,
-    entry::string::{parse_string, StringConfig},
-    symbol::Symbol,
+    entry::{
+        r#type::Type,
+        string::{parse_string},
+    },
 };
 
 #[test]
@@ -12,9 +14,9 @@ fn test_parse_string() {
         input,
         Ok((
             "",
-            StringConfig {
+            Type {
                 prompt: "Prefix for cross devel tools".to_string(),
-                symbol: Symbol::Constant("CROSS_COMPILE".to_string()),
+                symbol: "CROSS_COMPILE".to_string(),
                 value: Some("ppc-linux-elf-".to_string())
             }
         ))

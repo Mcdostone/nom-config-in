@@ -6,21 +6,11 @@ use nom::{
     sequence::{preceded, tuple},
     IResult,
 };
-use serde::Serialize;
 
+use super::{bool::parse_bool_value, comment::parse_prompt_option, r#type::Type};
 use crate::{symbol::parse_constant_symbol, util::ws};
 
-use super::{bool::parse_bool_value, comment::parse_prompt_option};
-
-#[derive(Debug, Clone, Serialize, PartialEq, Default)]
-pub struct Tristate {
-    pub prompt: String,
-    pub symbol: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<String>,
-}
-
-pub fn parse_tristate(input: &str) -> IResult<&str, Tristate> {
+pub fn parse_tristate(input: &str) -> IResult<&str, Type<String>> {
     map(
         tuple((
             ws(tag("tristate")),
@@ -28,7 +18,7 @@ pub fn parse_tristate(input: &str) -> IResult<&str, Tristate> {
             ws(parse_constant_symbol),
             preceded(space0, opt(map(parse_tristate_value, |d| d.to_string()))),
         )),
-        |(_, p, e, i)| Tristate {
+        |(_, p, e, i)| Type {
             prompt: p.to_string(),
             symbol: e.to_string(),
             value: i,

@@ -36,7 +36,7 @@ pub enum CompareOperator {
 
 // https://stackoverflow.com/questions/9509048/antlr-parser-for-and-or-logic-how-to-get-expressions-between-logic-operators
 
-#[derive(Debug, Serialize, PartialEq, Clone, Default)]
+#[derive(Debug, Serialize, PartialEq, Clone)]
 pub struct Expression(pub OrExpression);
 #[derive(Debug, Serialize, PartialEq, Clone)]
 pub enum AndExpression {
@@ -71,34 +71,11 @@ pub struct CompareExpression {
 
 #[derive(Debug, Serialize, PartialEq, Clone)]
 pub enum Atom {
-    Symbol(Symbol),
+    Symbol(String),
     Number(i64),
     Compare(CompareExpression),
     Parenthesis(Box<Expression>),
     String(Box<Atom>),
-}
-
-impl Default for OrExpression {
-    fn default() -> Self {
-        Self::Term(Default::default())
-    }
-}
-
-impl Default for AndExpression {
-    fn default() -> Self {
-        Self::Term(Default::default())
-    }
-}
-
-impl Default for Term {
-    fn default() -> Self {
-        Self::Atom(Default::default())
-    }
-}
-impl Default for Atom {
-    fn default() -> Self {
-        Self::Symbol(Default::default())
-    }
 }
 
 pub fn parse_or_expression(input: &str) -> IResult<&str, OrExpression> {

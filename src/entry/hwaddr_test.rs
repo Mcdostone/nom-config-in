@@ -1,7 +1,6 @@
 use crate::{
     assert_parsing_eq,
     entry::hwaddr::{parse_hwaddr, Hwaddr},
-    symbol::Symbol,
 };
 
 #[test]
@@ -13,9 +12,9 @@ fn test_parse_hwaddr() {
         Ok((
             "",
             Hwaddr {
-                prompt: "Physical memory start address".to_string(),
-                symbol: Symbol::Constant("CONFIG_MEMORY_START".to_string()),
-                value: "0c000000".to_string()
+                prompt: "Ethernet address".to_string(),
+                symbol: "ELTEST_ETHADR".to_string(),
+                value: "00408ccd0000".to_string()
             }
         ))
     )

@@ -1,7 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::bool::{parse_bool, Bool},
-    symbol::Symbol,
+    entry::{bool::parse_bool, r#type::Type},
 };
 
 #[test]
@@ -12,10 +11,10 @@ fn test_parse_bool() {
         input,
         Ok((
             "",
-            Bool {
-                symbol: Symbol::Constant("CONFIG_MATH_EMULATION".to_string()),
+            Type {
+                symbol: "CONFIG_MATH_EMULATION".to_string(),
                 prompt: "Kernel math emulation".to_string(),
-                default: Some("n".to_string())
+                value: Some("n".to_string())
             }
         ))
     )
@@ -29,10 +28,10 @@ fn test_parse_bool_ref() {
         input,
         Ok((
             "",
-            Bool {
+            Type {
                 prompt: "Sparc ESP Scsi Driver".to_string(),
-                symbol: Symbol::Constant("CONFIG_SCSI_SUNESP".to_string()),
-                default: Some("$CONFIG_SCSI".to_string())
+                symbol: "CONFIG_SCSI_SUNESP".to_string(),
+                value: Some("$CONFIG_SCSI".to_string())
             }
         ))
     )
@@ -46,10 +45,10 @@ fn test_parse_bool_no_value() {
         input,
         Ok((
             "",
-            Bool {
+            Type {
                 prompt: "Using SRM as bootloader".to_string(),
-                symbol: Symbol::Constant("CONFIG_ALPHA_SRM".to_string()),
-                default: None
+                symbol: "CONFIG_ALPHA_SRM".to_string(),
+                value: None
             }
         ))
     )

@@ -15,7 +15,7 @@ fn test_parse_dep_tristate() {
                 prompt: "SCSI disk support".to_string(),
                 symbol: "CONFIG_BLK_DEV_SD".to_string(),
                 value: "y".to_string(),
-                other: Some("$CONFIG_SCSI".to_string())
+                depends_on: Some("$CONFIG_SCSI".to_string())
             }
         ))
     )
@@ -33,7 +33,7 @@ fn test_parse_dep_tristate_variant() {
                 prompt: "SCSI disk support".to_string(),
                 symbol: "CONFIG_BLK_DEV_SD".to_string(),
                 value: "$CONFIG_SCSI".to_string(),
-                other: None,
+                depends_on: None,
             }
         ))
     )

@@ -31,7 +31,7 @@ pub fn parse_hwaddr(input: &str) -> IResult<&str, Hwaddr> {
         )),
         |(_, prompt, sym, value)| Hwaddr {
             prompt: prompt.to_string(),
-            symbol: Symbol::Constant(sym.to_string()),
+            symbol: sym.to_string(),
             value,
         },
     )(input)

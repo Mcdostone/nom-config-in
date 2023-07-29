@@ -8,7 +8,7 @@ use nom::{
     sequence::delimited,
     IResult,
 };
-use serde::Serialize;
+
 
 use super::util::ws;
 
@@ -17,30 +17,18 @@ use super::util::ws;
 /// phanumeric characters or underscores. Constant symbols are only part of expressions. Constant symbols
 /// are always surrounded by single or double quotes. Within the quote, any other character is allowed and
 /// the quotes can be escaped using ''.
-#[derive(Debug, Serialize, PartialEq, Clone)]
-pub enum Symbol {
-    Constant(String),
-    NonConstant(String),
-}
-
-impl Default for Symbol {
-    fn default() -> Self {
-        Self::Constant("".to_string())
-    }
-}
+pub type Symbol = String;
 
 pub fn parse_symbol(input: &str) -> IResult<&str, Symbol> {
     alt((
-        map(parse_constant_symbol, |c: &str| {
-            Symbol::Constant(c.to_string())
-        }),
+        map(parse_constant_symbol, |c: &str| c.to_string()),
         map(
             delimited(ws(char('"')), take_until("\""), char('"')),
-            |c: &str| Symbol::NonConstant(format!("\"{}\"", c)),
+            |c: &str| format!("\"{}\"", c),
         ),
         map(
             delimited(ws(char('\'')), take_until("'"), char('\'')),
-            |c: &str| Symbol::NonConstant(format!("'{}'", c)),
+            |c: &str| format!("'{}'", c),
         ),
     ))(input)
 }

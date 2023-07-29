@@ -13,7 +13,7 @@ use crate::{
     util::ws,
 };
 
-use super::comment::parse_prompt_option;
+use super::{comment::parse_prompt_option, r#type::Type};
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct StringConfig {
@@ -22,7 +22,7 @@ pub struct StringConfig {
     pub value: Option<String>,
 }
 
-pub fn parse_string(input: &str) -> IResult<&str, StringConfig> {
+pub fn parse_string(input: &str) -> IResult<&str, Type<String>> {
     map(
         tuple((
             ws(tag("string")),
@@ -30,9 +30,9 @@ pub fn parse_string(input: &str) -> IResult<&str, StringConfig> {
             ws(parse_constant_symbol),
             preceded(space0, opt(parse_string_value)),
         )),
-        |(_, p, e, v)| StringConfig {
+        |(_, p, e, v)| Type {
             prompt: p.to_string(),
-            symbol: Symbol::Constant(e.to_string()),
+            symbol: e.to_string(),
             value: v,
         },
     )(input)

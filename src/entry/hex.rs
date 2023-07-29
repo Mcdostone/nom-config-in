@@ -32,7 +32,7 @@ pub fn parse_hex(input: &str) -> IResult<&str, Hex> {
         )),
         |(_, prompt, sym, value)| Hex {
             prompt: prompt.to_string(),
-            symbol: Symbol::Constant(sym.to_string()),
+            symbol: sym.to_string(),
             value,
         },
     )(input)

@@ -1,12 +1,10 @@
 use crate::{
     assert_parsing_eq,
     entry::{
-        bool::Bool,
-        comment::Comment,
         main_menu_option::{parse_main_menu, parse_main_menu_option, MainMenu, MainMenuOption},
+        r#type::Type,
         Entry,
     },
-    symbol::Symbol,
 };
 
 #[test]
@@ -41,13 +39,11 @@ fn test_parse_main_menu_endmenu() {
                     value: "next_comment".to_string(),
                 },
                 entries: vec!(
-                    Entry::Comment(Comment {
-                        prompt: "Kernel hacking".to_string()
-                    }),
-                    Entry::Bool(Bool {
+                    Entry::Comment("Kernel hacking".to_string()),
+                    Entry::Bool(Type {
                         prompt: "Kernel profiling support".to_string(),
-                        symbol: Symbol::Constant("CONFIG_PROFILE".to_string()),
-                        default: None
+                        symbol: "CONFIG_PROFILE".to_string(),
+                        value: None
                     })
                 )
             }

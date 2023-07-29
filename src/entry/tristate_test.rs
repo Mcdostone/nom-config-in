@@ -1,6 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::tristate::{parse_tristate, Tristate},
+    entry::{r#type::Type, tristate::parse_tristate},
 };
 
 #[test]
@@ -11,7 +11,7 @@ fn test_parse_tristate() {
         input,
         Ok((
             "",
-            Tristate {
+            Type {
                 prompt: "hello".to_string(),
                 symbol: "PCI".to_string(),
                 value: Some("y".to_string())
