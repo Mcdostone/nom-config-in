@@ -1,7 +1,4 @@
-use crate::{
-    assert_parsing_eq,
-    symbol::{parse_symbol},
-};
+use crate::{assert_parsing_eq, symbol::parse_symbol};
 
 #[test]
 fn test_parse_symbol() {

@@ -5,7 +5,6 @@ use nom::{
     IResult,
 };
 
-
 use crate::{symbol::parse_constant_symbol, util::ws};
 
 use super::{hex::parse_hex_value, DefineType};

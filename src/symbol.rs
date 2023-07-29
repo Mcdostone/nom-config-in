@@ -9,7 +9,6 @@ use nom::{
     IResult,
 };
 
-
 use super::util::ws;
 
 /// There are two types of symbols: constant and non-constant symbols. Non-constant symbols are the most

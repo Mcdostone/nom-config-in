@@ -1,12 +1,10 @@
-use crate::{
-    entry::{
-        def_bool::DefBool,
-        expression::{
-            AndExpression, Atom, CompareExpression, CompareOperator, Expression, OrExpression, Term,
-        },
-        r#if::{parse_if, If},
-        r#type::Type,
+use crate::entry::{
+    def_bool::DefBool,
+    expression::{
+        AndExpression, Atom, CompareExpression, CompareOperator, Expression, OrExpression, Term,
     },
+    r#if::{parse_if, If},
+    r#type::Type,
     Entry,
 };
 

@@ -1,4 +1,4 @@
-use entry::Entry;
+use config_in::ConfigIn;
 
 use nom::{
     combinator::{eof, map},
@@ -6,12 +6,12 @@ use nom::{
     sequence::delimited,
     IResult,
 };
-use serde::Serialize;
+
 use util::ws;
 
 use crate::{entry::parse_entry, util::ws_comment};
 
-pub mod config;
+pub mod config_in;
 pub mod entry;
 pub mod symbol;
 pub mod util;
@@ -26,15 +26,9 @@ pub mod symbol_test;
 #[cfg(test)]
 pub mod util_test;
 
-#[derive(Debug, Serialize, Clone, PartialEq, Default)]
-pub struct Config {
-    pub file: String,
-    pub entries: Vec<Entry>,
-}
-
-pub fn parse_config_in(input: &str) -> IResult<&str, Config> {
+pub fn parse_config_in(input: &str) -> IResult<&str, ConfigIn> {
     let (input, result) = map(delimited(ws_comment, many0(parse_entry), ws_comment), |d| {
-        Config {
+        ConfigIn {
             file: "".to_string(),
             entries: d,
         }

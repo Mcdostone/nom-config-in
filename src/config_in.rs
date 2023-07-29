@@ -7,7 +7,7 @@ use crate::{
 };
 
 #[derive(Debug, Serialize, Clone, PartialEq, Default)]
-pub struct Config {
+pub struct ConfigIn {
     pub file: String,
     pub entries: Vec<Entry>,
 }

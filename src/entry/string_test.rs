@@ -1,9 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::{
-        r#type::Type,
-        string::{parse_string},
-    },
+    entry::{r#type::Type, string::parse_string},
 };
 
 #[test]

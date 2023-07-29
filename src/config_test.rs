@@ -1,6 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    config::parse_config,
+    config_in::parse_config,
     entry::{def_bool::DefBool, r#type::Type, Entry},
 };
 

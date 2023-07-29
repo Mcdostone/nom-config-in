@@ -7,11 +7,7 @@ use nom::{
     IResult,
 };
 
-
-use crate::{
-    symbol::{parse_constant_symbol},
-    util::ws,
-};
+use crate::{symbol::parse_constant_symbol, util::ws};
 
 use super::{comment::parse_prompt_option, r#type::Type};
 

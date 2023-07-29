@@ -1,9 +1,6 @@
 use crate::{
     assert_parsing_eq,
-    entry::{
-        define_int::{parse_define_int},
-        DefineType,
-    },
+    entry::{define_int::parse_define_int, DefineType},
 };
 
 #[test]

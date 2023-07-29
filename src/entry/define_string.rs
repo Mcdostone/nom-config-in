@@ -6,11 +6,7 @@ use nom::{
     IResult,
 };
 
-
-use crate::{
-    symbol::{parse_constant_symbol},
-    util::ws,
-};
+use crate::{symbol::parse_constant_symbol, util::ws};
 
 use super::{string::parse_string_value, DefineType};
 

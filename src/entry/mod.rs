@@ -1,14 +1,12 @@
 use nom::{branch::alt, combinator::map, multi::many0, sequence::delimited, IResult};
 use serde::Serialize;
 
-use crate::{
-    util::{ws, ws_comment},
-};
+use crate::util::{ws, ws_comment};
 
 use self::{
     bool::parse_bool,
     choice::{parse_choice, Choice},
-    comment::{parse_comment},
+    comment::parse_comment,
     def_bool::{parse_def_bool, DefBool},
     define::{parse_define, Define},
     define_hex::parse_define_hex,
@@ -29,7 +27,7 @@ use self::{
     r#if::{parse_if, If},
     r#type::Type,
     source::{parse_source, Source},
-    string::{parse_string},
+    string::parse_string,
     tristate::parse_tristate,
     unset::{parse_unset, Unset},
 };
