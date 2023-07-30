@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
-use super::bool::parse_bool_value;
+use super::r#type::parse_bool_value;
 
 #[derive(Debug, Clone, Serialize, PartialEq, Default)]
 pub struct DefBool {

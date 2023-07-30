@@ -19,7 +19,8 @@ fn test_parse_define_int() {
             "",
             DefineType {
                 symbol: "CONFIG_MAX_MEMSIZE".to_string(),
-                value: Some(2048)
+                r#type: crate::entry::r#type::TypeEnum::Int,
+                value: 2048
             }
         ))
     )
@@ -35,7 +36,8 @@ fn test_parse_define_string() {
             "",
             DefineType {
                 symbol: "CONFIG_COMPILE_OPTIONS".to_string(),
-                value: Some("-g".to_string())
+                r#type: crate::entry::r#type::TypeEnum::String,
+                value: "-g".to_string()
             }
         ))
     )
@@ -51,7 +53,8 @@ fn test_parse_define_tristate() {
             "",
             DefineTristate {
                 symbol: "CONFIG_MATHEMU".to_string(),
-                value: Some("y".to_string())
+                r#type: crate::entry::r#type::TypeEnum::Tristate,
+                value: "y".to_string()
             }
         ))
     )
@@ -67,7 +70,8 @@ fn test_parse_define_hex() {
             "",
             DefineType {
                 symbol: "CONFIG_MEMORY_START".to_string(),
-                value: Some("0c000000".to_string())
+                r#type: crate::entry::r#type::TypeEnum::Hex,
+                value: "0c000000".to_string()
             }
         ))
     )

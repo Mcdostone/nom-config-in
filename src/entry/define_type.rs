@@ -1,7 +1,7 @@
 use nom::{
     bytes::complete::tag,
     character::complete::space0,
-    combinator::{map, opt},
+    combinator::map,
     sequence::{preceded, tuple},
     IResult,
 };
@@ -13,18 +13,23 @@ use crate::{
     ConfigInInput,
 };
 
-use super::{expression::parse_number, hex::parse_hex_value, string::parse_string_value};
+use super::{
+    expression::parse_number,
+    r#type::{parse_hex_value, parse_string_value, TypeEnum},
+};
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct DefineType<T> {
     pub symbol: String,
-    pub value: Option<T>,
+    pub r#type: TypeEnum,
+    pub value: T,
 }
 
 pub type DefineTristate = DefineType<String>;
 pub type DefineString = DefineType<String>;
 pub type DefineTBool = DefineType<String>;
 pub type DefineHex = DefineType<String>;
+pub type DefineInt = DefineType<i64>;
 
 pub fn parse_define_string(input: ConfigInInput) -> IResult<ConfigInInput, DefineType<String>> {
     map(
@@ -35,7 +40,8 @@ pub fn parse_define_string(input: ConfigInInput) -> IResult<ConfigInInput, Defin
         )),
         |(_, sym, value)| DefineType {
             symbol: sym.to_string(),
-            value: Some(value),
+            r#type: TypeEnum::String,
+            value,
         },
     )(input)
 }
@@ -45,10 +51,11 @@ pub fn parse_define_hex(input: ConfigInInput) -> IResult<ConfigInInput, DefineTy
         tuple((
             ws(tag("define_hex")),
             ws(parse_constant_symbol),
-            opt(map(parse_hex_value, |d| d.to_string())),
+            map(parse_hex_value, |d| d.to_string()),
         )),
         |(_, sym, value)| DefineType {
             symbol: sym.to_string(),
+            r#type: TypeEnum::Hex,
             value,
         },
     )(input)
@@ -59,10 +66,11 @@ pub fn parse_define_int(input: ConfigInInput) -> IResult<ConfigInInput, DefineTy
         tuple((
             tag("define_int"),
             wsi(parse_constant_symbol),
-            wsi(opt(map(parse_number, |s| s))),
+            wsi(map(parse_number, |s| s)),
         )),
         |(_, sym, value)| DefineType {
             symbol: sym.to_string(),
+            r#type: TypeEnum::Int,
             value,
         },
     ))(input)
@@ -73,13 +81,11 @@ pub fn parse_define_tristate(input: ConfigInInput) -> IResult<ConfigInInput, Def
         tuple((
             ws(tag("define_tristate")),
             ws(parse_constant_symbol),
-            opt(preceded(
-                space0,
-                map(parse_constant_symbol, |d| d.to_string()),
-            )),
+            preceded(space0, map(parse_constant_symbol, |d| d.to_string())),
         )),
         |(_, p, value)| DefineTristate {
             symbol: p.to_string(),
+            r#type: TypeEnum::Tristate,
             value,
         },
     )(input)

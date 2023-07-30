@@ -7,7 +7,6 @@ use crate::{
 };
 
 use self::{
-    bool::parse_bool,
     choice::{parse_choice, Choice},
     comment::parse_comment,
     define::{parse_define, Define},
@@ -19,20 +18,15 @@ use self::{
     echo::{parse_echo, Echo},
     env_variable::{parse_env_variable, EnvVariable},
     exec::{parse_exec, Exec},
-    hex::{parse_hex, Hex},
     hwaddr::{parse_hwaddr, Hwaddr},
-    int::{parse_int, Int},
     main_menu_name::{parse_main_menu_name, MainMenuName},
     main_menu_option::{parse_main_menu_option, MainMenuOption},
     r#if::{parse_if, If},
-    r#type::Type,
+    r#type::{parse_bool, parse_hex, parse_int, parse_string, parse_tristate, Int, Type},
     source::{parse_source, Source},
-    string::parse_string,
-    tristate::parse_tristate,
     unset::{parse_unset, Unset},
 };
 
-pub mod bool;
 pub mod choice;
 pub mod comment;
 pub mod def_bool;
@@ -43,15 +37,11 @@ pub mod echo;
 pub mod env_variable;
 pub mod exec;
 pub mod expression;
-pub mod hex;
 pub mod hwaddr;
 pub mod r#if;
-pub mod int;
 pub mod main_menu_name;
 pub mod main_menu_option;
 pub mod source;
-pub mod string;
-pub mod tristate;
 pub mod r#type;
 pub mod unset;
 
@@ -62,8 +52,8 @@ pub enum Entry {
     Bool(Type<String>),
     Tristate(Type<String>),
     String(Type<String>),
-    Hex(Hex),
-    Int(Int),
+    Hex(Type<String>),
+    Int(Type<Int>),
     DepBool(DepBool),
     DepTristate(DepTristate),
     DefineTristate(DefineTristate),
@@ -120,8 +110,6 @@ pub fn parse_entries(input: ConfigInInput) -> IResult<ConfigInInput, Vec<Entry>>
 }
 
 #[cfg(test)]
-mod bool_test;
-#[cfg(test)]
 mod choice_test;
 #[cfg(test)]
 mod comment_test;
@@ -142,23 +130,16 @@ pub mod exec_test;
 #[cfg(test)]
 pub mod expression_test;
 #[cfg(test)]
-mod hex_test;
-#[cfg(test)]
 mod hwaddr_test;
 #[cfg(test)]
 pub mod if_test;
 #[cfg(test)]
-pub mod int_test;
-#[cfg(test)]
 mod main_menu_name_test;
-#[cfg(test)]
-mod string_test;
-#[cfg(test)]
-mod unset_test;
-
 #[cfg(test)]
 pub mod main_menu_option_test;
 #[cfg(test)]
 pub mod source_test;
 #[cfg(test)]
-pub mod tristate_test;
+mod type_test;
+#[cfg(test)]
+mod unset_test;

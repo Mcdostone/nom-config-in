@@ -87,6 +87,7 @@ fn test_parse_if_else_entry() {
                 )),
                 else_block: Some(vec!(Entry::Bool(Type {
                     symbol: "CONFIG_BLK_DEV_SD".to_string(),
+                    r#type: crate::entry::r#type::TypeEnum::Bool,
                     prompt: "Scsi disk support".to_string(),
                     value: Some("y".to_string())
                 })))
