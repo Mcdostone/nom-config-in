@@ -1,21 +1,21 @@
 use nom::{branch::alt, combinator::map, multi::many0, sequence::delimited, IResult};
 use serde::Serialize;
 
-use crate::util::{ws, ws_comment};
+use crate::{
+    util::{ws, ws_comment},
+    ConfigInInput,
+};
 
 use self::{
     bool::parse_bool,
     choice::{parse_choice, Choice},
     comment::parse_comment,
-    def_bool::{parse_def_bool, DefBool},
     define::{parse_define, Define},
-    define_hex::parse_define_hex,
-    define_int::parse_define_int,
-    define_string::parse_define_string,
-    define_tristate::{parse_define_tristate, DefineTristate},
-    define_type::DefineType,
-    dep_bool::{parse_dep_bool, DepBool},
-    dep_tristate::{parse_dep_tristate, DepTristate},
+    define_type::{
+        parse_define_hex, parse_define_int, parse_define_string, parse_define_tristate,
+        DefineTristate, DefineType,
+    },
+    dep_type::{parse_dep_bool, parse_dep_tristate, DepBool, DepTristate},
     echo::{parse_echo, Echo},
     env_variable::{parse_env_variable, EnvVariable},
     exec::{parse_exec, Exec},
@@ -23,7 +23,7 @@ use self::{
     hwaddr::{parse_hwaddr, Hwaddr},
     int::{parse_int, Int},
     main_menu_name::{parse_main_menu_name, MainMenuName},
-    main_menu_option::{parse_main_menu, parse_main_menu_option, MainMenu, MainMenuOption},
+    main_menu_option::{parse_main_menu_option, MainMenuOption},
     r#if::{parse_if, If},
     r#type::Type,
     source::{parse_source, Source},
@@ -37,13 +37,8 @@ pub mod choice;
 pub mod comment;
 pub mod def_bool;
 pub mod define;
-pub mod define_hex;
-pub mod define_int;
-pub mod define_string;
-pub mod define_tristate;
 pub mod define_type;
-pub mod dep_bool;
-pub mod dep_tristate;
+pub mod dep_type;
 pub mod echo;
 pub mod env_variable;
 pub mod exec;
@@ -65,44 +60,43 @@ pub enum Entry {
     Comment(String),
     If(If),
     Bool(Type<String>),
-    DepBool(DepBool),
-    Exec(Exec),
-    Int(Int),
-    Echo(Echo),
-    EnvVariable(EnvVariable),
+    Tristate(Type<String>),
+    String(Type<String>),
     Hex(Hex),
-    Unset(Unset),
+    Int(Int),
+    DepBool(DepBool),
     DepTristate(DepTristate),
     DefineTristate(DefineTristate),
-    MainMenuName(MainMenuName),
-    String(Type<String>),
-    MainMenuOption(MainMenuOption),
-    Choice(Choice),
-    Source(Source),
-    Tristate(Type<String>),
     DefineInt(DefineType<i64>),
     DefineHex(DefineType<String>),
     DefineString(DefineType<String>),
-    DefBool(DefBool),
-    MainMenu(MainMenu),
+    Exec(Exec),
+    Echo(Echo),
+    EnvVariable(EnvVariable),
+    Unset(Unset),
+    MainMenuName(MainMenuName),
+    MainMenuOption(MainMenuOption),
+    Choice(Choice),
+    Source(Source),
+    //MainMenu(MainMenu),
     Define(Define),
     Hwaddr(Hwaddr),
 }
 
-pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
+pub fn parse_entry(input: ConfigInInput) -> IResult<ConfigInInput, Entry> {
     alt((
         alt((
             map(ws(parse_define_hex), Entry::DefineHex),
             map(ws(parse_bool), Entry::Bool),
             map(ws(parse_int), Entry::Int),
             map(ws(parse_define_string), Entry::DefineString),
+            map(ws(parse_define_int), Entry::DefineInt),
+            map(ws(parse_define_tristate), Entry::DefineTristate),
             map(ws(parse_hwaddr), Entry::Hwaddr),
         )),
         map(ws(parse_exec), Entry::Exec),
-        map(ws(parse_def_bool), Entry::DefBool),
+        //map(ws(parse_def_bool), Entry::DefBool),
         map(ws(parse_dep_bool), Entry::DepBool),
-        map(ws(parse_define_int), Entry::DefineInt),
-        map(ws(parse_define_tristate), Entry::DefineTristate),
         map(ws(parse_echo), Entry::Echo),
         map(ws(parse_string), Entry::String),
         map(ws(parse_if), Entry::If),
@@ -111,7 +105,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
         map(ws(parse_comment), Entry::Comment),
         map(ws(parse_tristate), Entry::Tristate),
         map(ws(parse_main_menu_name), Entry::MainMenuName),
-        map(ws(parse_main_menu), Entry::MainMenu),
+        //map(ws(parse_main_menu), Entry::MainMenu),
         map(ws(parse_main_menu_option), Entry::MainMenuOption),
         map(ws(parse_choice), Entry::Choice),
         map(ws(parse_env_variable), Entry::EnvVariable),
@@ -121,7 +115,7 @@ pub fn parse_entry(input: &str) -> IResult<&str, Entry> {
     ))(input)
 }
 
-pub fn parse_entries(input: &str) -> IResult<&str, Vec<Entry>> {
+pub fn parse_entries(input: ConfigInInput) -> IResult<ConfigInInput, Vec<Entry>> {
     delimited(ws_comment, many0(parse_entry), ws_comment)(input)
 }
 
@@ -134,19 +128,11 @@ mod comment_test;
 #[cfg(test)]
 mod def_bool_test;
 #[cfg(test)]
-mod define_hex_test;
-#[cfg(test)]
-mod define_int_test;
-#[cfg(test)]
-mod define_string_test;
-#[cfg(test)]
 mod define_test;
 #[cfg(test)]
-mod define_tristate_test;
+mod define_type_test;
 #[cfg(test)]
-mod dep_bool_test;
-#[cfg(test)]
-pub mod dep_tristate_test;
+mod dep_type_test;
 #[cfg(test)]
 mod echo_test;
 #[cfg(test)]

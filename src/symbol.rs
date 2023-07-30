@@ -9,6 +9,8 @@ use nom::{
     IResult,
 };
 
+use crate::ConfigInInput;
+
 use super::util::ws;
 
 /// There are two types of symbols: constant and non-constant symbols. Non-constant symbols are the most
@@ -18,23 +20,23 @@ use super::util::ws;
 /// the quotes can be escaped using ''.
 pub type Symbol = String;
 
-pub fn parse_symbol(input: &str) -> IResult<&str, Symbol> {
+pub fn parse_symbol(input: ConfigInInput) -> IResult<ConfigInInput, Symbol> {
     alt((
-        map(parse_constant_symbol, |c: &str| c.to_string()),
+        map(parse_constant_symbol, |c: ConfigInInput| c.to_string()),
         map(
             delimited(ws(char('"')), take_until("\""), char('"')),
-            |c: &str| format!("\"{}\"", c),
+            |c: ConfigInInput| format!("\"{}\"", c),
         ),
         map(
             delimited(ws(char('\'')), take_until("'"), char('\'')),
-            |c: &str| format!("'{}'", c),
+            |c: ConfigInInput| format!("'{}'", c),
         ),
     ))(input)
 }
 
-pub fn parse_constant_symbol(input: &str) -> IResult<&str, &str> {
+pub fn parse_constant_symbol(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
     map(
         recognize(many1(alt((alphanumeric1, recognize(one_of("(),._-/$+")))))),
-        |c: &str| c.trim(),
+        |c: ConfigInInput| c,
     )(input)
 }

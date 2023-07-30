@@ -1,7 +1,7 @@
 use nom::{bytes::complete::tag, combinator::map, multi::many1, sequence::tuple, IResult};
 use serde::Serialize;
 
-use crate::{symbol::parse_constant_symbol, util::ws};
+use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
 use super::bool::parse_bool_value;
 
@@ -11,7 +11,7 @@ pub struct DefBool {
     pub values: Vec<String>,
 }
 
-pub fn parse_def_bool(input: &str) -> IResult<&str, DefBool> {
+pub fn parse_def_bool(input: ConfigInInput) -> IResult<ConfigInInput, DefBool> {
     map(
         tuple((
             ws(tag("define_bool")),

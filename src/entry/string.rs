@@ -11,6 +11,7 @@ use serde::Serialize;
 use crate::{
     symbol::{parse_constant_symbol, Symbol},
     util::ws,
+    ConfigInInput,
 };
 
 use super::{comment::parse_prompt_option, r#type::Type};
@@ -22,7 +23,7 @@ pub struct StringConfig {
     pub value: Option<String>,
 }
 
-pub fn parse_string(input: &str) -> IResult<&str, Type<String>> {
+pub fn parse_string(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
     map(
         tuple((
             ws(tag("string")),
@@ -38,11 +39,14 @@ pub fn parse_string(input: &str) -> IResult<&str, Type<String>> {
     )(input)
 }
 
-pub fn parse_string_value(input: &str) -> IResult<&str, String> {
+pub fn parse_string_value(input: ConfigInInput) -> IResult<ConfigInInput, String> {
     map(
         alt((
             parse_prompt_option,
-            terminated(not_line_ending, alt((line_ending, eof))),
+            map(
+                terminated(not_line_ending::<ConfigInInput, _>, alt((line_ending, eof))),
+                |d| d.to_string(),
+            ),
         )),
         |d| d.to_string(),
     )(input)

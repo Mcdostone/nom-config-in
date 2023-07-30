@@ -12,7 +12,7 @@ fn test_parse_string() {
         Ok((
             "",
             Type {
-                prompt: "Prefix for cross devel tools".to_string(),
+                prompt: "  Prefix for cross devel tools".to_string(),
                 symbol: "CROSS_COMPILE".to_string(),
                 value: Some("ppc-linux-elf-".to_string())
             }

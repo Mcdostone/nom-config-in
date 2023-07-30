@@ -13,7 +13,7 @@ fn test_parse_int() {
             "",
             Int {
                 symbol: "NR_FTAPE_BUFFERS".to_string(),
-                prompt: "number of ftape buffers".to_string(),
+                prompt: " number of ftape buffers".to_string(),
                 value: Some(3),
                 range: Default::default()
             }

@@ -1,0 +1,3 @@
+- https://lwn.net/Articles/8117/
+- https://os.inf.tu-dresden.de/l4env/doc/html/bid-spec/node36.html
+- https://github.com/xfguo/menuconfig/blob/master/config-language.txt

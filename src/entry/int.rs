@@ -11,6 +11,7 @@ use crate::{
     entry::expression::parse_number,
     symbol::{parse_constant_symbol, Symbol},
     util::ws,
+    ConfigInInput,
 };
 
 use super::comment::parse_prompt_option;
@@ -25,7 +26,7 @@ pub struct Int {
     pub range: Option<(i64, i64)>,
 }
 
-pub fn parse_int(input: &str) -> IResult<&str, Int> {
+pub fn parse_int(input: ConfigInInput) -> IResult<ConfigInInput, Int> {
     map(
         tuple((
             ws(tag("int")),
@@ -43,6 +44,6 @@ pub fn parse_int(input: &str) -> IResult<&str, Int> {
     )(input)
 }
 
-pub fn parse_range(input: &str) -> IResult<&str, (i64, i64)> {
+pub fn parse_range(input: ConfigInInput) -> IResult<ConfigInInput, (i64, i64)> {
     pair(map(parse_number, |s| s), ws(map(parse_number, |s| s)))(input)
 }

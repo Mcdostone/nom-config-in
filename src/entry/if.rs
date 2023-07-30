@@ -7,14 +7,14 @@ use nom::{
 };
 use serde::Serialize;
 
-use crate::util::ws;
+use crate::{util::ws, ConfigInInput};
 
 use super::{
     expression::{parse_expression, Expression},
     parse_entry, Entry,
 };
 
-pub fn parse_if(input: &str) -> IResult<&str, If> {
+pub fn parse_if(input: ConfigInInput) -> IResult<ConfigInInput, If> {
     map(
         tuple((
             ws(parse_if_condition),
@@ -38,7 +38,7 @@ pub struct If {
     pub else_block: Option<Vec<Entry>>,
 }
 
-pub fn parse_if_condition(input: &str) -> IResult<&str, Expression> {
+pub fn parse_if_condition(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
     map(
         tuple((
             ws(tag("if")),
@@ -50,6 +50,6 @@ pub fn parse_if_condition(input: &str) -> IResult<&str, Expression> {
     )(input)
 }
 
-pub fn parse_else(input: &str) -> IResult<&str, Vec<Entry>> {
+pub fn parse_else(input: ConfigInInput) -> IResult<ConfigInInput, Vec<Entry>> {
     preceded(ws(tag("else")), many0(parse_entry))(input)
 }

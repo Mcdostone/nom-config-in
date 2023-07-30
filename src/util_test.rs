@@ -1,6 +1,6 @@
 use nom::{bytes::complete::tag, combinator::eof, sequence::pair};
 
-use crate::{entry::comment::parse_prompt_option, util::ws};
+use crate::{assert_parsing_eq, entry::comment::parse_prompt_option, util::ws};
 
 #[test]
 fn test_ws() {
@@ -27,6 +27,9 @@ fn test_ws_backslash_space() {
 fn test_ws_backslash_other() {
     let input = r#" 'hello world'     \
         hello  "#;
-    let result = parse_prompt_option(input);
-    assert_eq!(result, Ok(("     \\\n        hello  ", "hello world")))
+    assert_parsing_eq!(
+        parse_prompt_option,
+        input,
+        Ok(("     \\\n        hello  ", "hello world".to_string()))
+    )
 }

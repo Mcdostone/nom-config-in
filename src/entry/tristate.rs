@@ -8,9 +8,9 @@ use nom::{
 };
 
 use super::{bool::parse_bool_value, comment::parse_prompt_option, r#type::Type};
-use crate::{symbol::parse_constant_symbol, util::ws};
+use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
-pub fn parse_tristate(input: &str) -> IResult<&str, Type<String>> {
+pub fn parse_tristate(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
     map(
         tuple((
             ws(tag("tristate")),
@@ -26,6 +26,6 @@ pub fn parse_tristate(input: &str) -> IResult<&str, Type<String>> {
     )(input)
 }
 
-pub fn parse_tristate_value(input: &str) -> IResult<&str, &str> {
+pub fn parse_tristate_value(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
     alt((parse_bool_value, tag("m")))(input)
 }

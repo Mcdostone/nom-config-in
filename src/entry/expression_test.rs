@@ -1,8 +1,7 @@
 use crate::{
     assert_parsing_eq,
     entry::expression::{
-        parse_expression, AndExpression, Atom, CompareExpression, CompareOperator, Expression,
-        OrExpression, Term,
+        parse_expression, AndExpression, Atom, CompareExpression, CompareOperator, Expression, Term,
     },
 };
 
@@ -13,9 +12,7 @@ fn test_parse_expression_number() {
         "-412",
         Ok((
             "",
-            Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                Atom::Number(-412)
-            ))))
+            Expression::Term(AndExpression::Term(Term::Atom(Atom::Number(-412))))
         ))
     )
 }
@@ -27,8 +24,8 @@ fn test_parse_term() {
         "!KVM",
         Ok((
             "",
-            Expression(OrExpression::Term(AndExpression::Term(Term::Not(
-                Atom::Symbol("KVM".to_string())
+            Expression::Term(AndExpression::Term(Term::Not(Atom::Symbol(
+                "KVM".to_string()
             ))))
         ))
     )
@@ -41,10 +38,10 @@ fn test_parse_depends_on_and() {
         "ALPHA_MIATA -a ALPHA_LX164",
         Ok((
             "",
-            Expression(OrExpression::Term(AndExpression::Expression(vec!(
+            Expression::Term(AndExpression::Expression(vec!(
                 Term::Atom(Atom::Symbol("ALPHA_MIATA".to_string())),
                 Term::Atom(Atom::Symbol("ALPHA_LX164".to_string())),
-            ))))
+            )))
         ))
     )
 }
@@ -56,13 +53,13 @@ fn test_parse_depends_on_ambigus() {
         "ALPHA_MIATA -o ALPHA_LX164 -a ALPHA_SX164",
         Ok((
             "",
-            Expression(OrExpression::Expression(vec!(
+            Expression::Expression(vec!(
                 AndExpression::Term(Term::Atom(Atom::Symbol("ALPHA_MIATA".to_string()))),
                 AndExpression::Expression(vec!(
                     Term::Atom(Atom::Symbol("ALPHA_LX164".to_string())),
                     Term::Atom(Atom::Symbol("ALPHA_SX164".to_string())),
                 ))
-            )))
+            ))
         ))
     )
 }
@@ -72,20 +69,20 @@ fn test_parse_depends_on_optimization() {
     assert_parsing_eq!(
         parse_expression,
         "ALPHA_MIATA -o ALPHA_LX164 -a ALPHA_SX164 -a (HELLO = world) -o ALPHA_SX164 -a (HELLO = world)",
-        Ok(("", Expression(OrExpression::Expression(
+        Ok(("", Expression::Expression(
             vec!(
                 AndExpression::Term(Term::Atom(Atom::Symbol("ALPHA_MIATA".to_string()))),
                 AndExpression::Expression(vec!(
                     Term::Atom(Atom::Symbol("ALPHA_LX164".to_string())),
                     Term::Atom(Atom::Symbol("ALPHA_SX164".to_string())),
-                    Term::Atom(Atom::Parenthesis(Box::new(Expression(OrExpression::Term(AndExpression::Term(Term::Atom(Atom::Compare(
+                    Term::Atom(Atom::Parenthesis(Box::new(Expression::Term(AndExpression::Term(Term::Atom(Atom::Compare(
                         CompareExpression { left: "HELLO".to_string(), operator: CompareOperator::Equal, right: "world".to_string() }
-                    )))))))),
+                    ))))))),
                 )),
                 AndExpression::Expression(vec!(
                     Term::Atom(Atom::Symbol("ALPHA_SX164".to_string())),
-                    Term::Atom(Atom::Parenthesis(Box::new(Expression(OrExpression::Term(AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression { left: "HELLO".to_string(), operator: CompareOperator::Equal, right: "world".to_string()}))))))))
+                    Term::Atom(Atom::Parenthesis(Box::new(Expression::Term(AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression { left: "HELLO".to_string(), operator: CompareOperator::Equal, right: "world".to_string()})))))))
                 ))
             )
-        )))))
+        ))))
 }

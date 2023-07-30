@@ -8,11 +8,11 @@ use nom::{
 };
 use serde::Serialize;
 
-use crate::{symbol::parse_constant_symbol, util::ws};
+use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
 use super::comment::parse_prompt_option;
 
-fn parse_choice_option(input: &str) -> IResult<&str, ChoiceOption> {
+fn parse_choice_option(input: ConfigInInput) -> IResult<ConfigInInput, ChoiceOption> {
     map(
         tuple((ws(parse_constant_symbol), ws(parse_constant_symbol))),
         |(l, r)| ChoiceOption {
@@ -22,9 +22,9 @@ fn parse_choice_option(input: &str) -> IResult<&str, ChoiceOption> {
     )(input)
 }
 
-pub fn parse_choice(input: &str) -> IResult<&str, Choice> {
+pub fn parse_choice(input: ConfigInInput) -> IResult<ConfigInInput, Choice> {
     let (input, prompt) = tuple((ws(tag("choice")), ws(parse_prompt_option)))(input)?;
-    let (input, ok): (&str, (Vec<ChoiceOption>, &str)) = alt((
+    let (input, ok) = alt((
         pair(
             delimited(ws(tag("\"")), many1(ws(parse_choice_option)), ws(tag("\""))),
             ws(parse_constant_symbol),

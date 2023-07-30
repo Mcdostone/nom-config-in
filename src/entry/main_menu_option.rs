@@ -2,45 +2,37 @@ use nom::{
     bytes::complete::tag,
     combinator::map,
     multi::many0,
-    sequence::{pair, tuple},
+    sequence::{pair, preceded, tuple},
     IResult,
 };
 use serde::Serialize;
 
-use crate::{symbol::parse_constant_symbol, util::ws};
+use crate::{
+    util::{ws, wsi},
+    ConfigInInput,
+};
 
-use super::{parse_entry, Entry};
+use super::{comment::parse_comment, parse_entry, Entry};
 
-pub fn parse_main_menu_option(input: &str) -> IResult<&str, MainMenuOption> {
-    map(
-        pair(ws(tag("mainmenu_option")), ws(parse_constant_symbol)),
-        |(_, prompt)| MainMenuOption {
-            value: prompt.to_string(),
-        },
-    )(input)
-}
-
-#[derive(Debug, Default, Clone, Serialize, PartialEq)]
-pub struct MainMenuOption {
-    pub value: String,
-}
-
-pub fn parse_main_menu(input: &str) -> IResult<&str, MainMenu> {
+pub fn parse_main_menu_option(input: ConfigInInput) -> IResult<ConfigInInput, MainMenuOption> {
     map(
         tuple((
-            parse_main_menu_option,
+            preceded(
+                pair(ws(tag("mainmenu_option")), wsi(tag("next_comment"))),
+                ws(parse_comment),
+            ),
             many0(ws(parse_entry)),
             ws(tag("endmenu")),
         )),
-        |(d, e, _)| MainMenu {
-            menu_option: d,
+        |(d, e, _)| MainMenuOption {
+            comment: d,
             entries: e,
         },
     )(input)
 }
 
 #[derive(Debug, Default, Clone, Serialize, PartialEq)]
-pub struct MainMenu {
-    pub menu_option: MainMenuOption,
+pub struct MainMenuOption {
+    pub comment: String,
     pub entries: Vec<Entry>,
 }

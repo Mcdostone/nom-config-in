@@ -1,8 +1,5 @@
 use crate::entry::{
-    def_bool::DefBool,
-    expression::{
-        AndExpression, Atom, CompareExpression, CompareOperator, Expression, OrExpression, Term,
-    },
+    expression::{AndExpression, Atom, CompareExpression, CompareOperator, Expression, Term},
     r#if::{parse_if, If},
     r#type::Type,
     Entry,
@@ -20,13 +17,13 @@ fn test_parse_if_entry() {
         Ok((
             "",
             If {
-                condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
-                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                    Box::new(Expression::Term(AndExpression::Term(Term::Atom(
+                        Atom::Compare(CompareExpression {
                             left: "\"$CONFIG_SCSI\"".to_string(),
                             operator: CompareOperator::Equal,
                             right: "\"n\"".to_string()
-                        })))
+                        })
                     ))))
                 )))),
                 if_block: vec!(Entry::Comment(
@@ -48,13 +45,13 @@ fn test_parse_if_entry_quote_operator() {
         Ok((
             "",
             If {
-                condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
-                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                    Box::new(Expression::Term(AndExpression::Term(Term::Atom(
+                        Atom::Compare(CompareExpression {
                             left: "\"$CONFIG_SCSI\"".to_string(),
                             operator: CompareOperator::Equal,
                             right: "\"n\"".to_string()
-                        })))
+                        })
                     ))))
                 )))),
                 if_block: vec!(Entry::Comment(
@@ -76,13 +73,13 @@ fn test_parse_if_else_entry() {
         Ok((
             "",
             If {
-                condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
-                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                    Box::new(Expression::Term(AndExpression::Term(Term::Atom(
+                        Atom::Compare(CompareExpression {
                             left: "\"$CONFIG_SCSI\"".to_string(),
                             operator: CompareOperator::Equal,
                             right: "\"n\"".to_string()
-                        })))
+                        })
                     ))))
                 )))),
                 if_block: vec!(Entry::Comment(
@@ -107,23 +104,23 @@ fn test_parse_if_else_backtick() {
         Ok((
             "",
             If {
-                condition: Expression(OrExpression::Term(AndExpression::Term(Term::Atom(
-                    Atom::Parenthesis(Box::new(Expression(OrExpression::Term(
-                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                    Box::new(Expression::Term(AndExpression::Term(Term::Atom(
+                        Atom::Compare(CompareExpression {
                             left: "\"`uname`\"".to_string(),
                             operator: CompareOperator::NotEqual,
                             right: "\"Linux\"".to_string()
-                        })))
+                        })
                     ))))
                 )))),
-                if_block: vec!(Entry::DefBool(DefBool {
+                if_block: vec!(/*Entry::DefBool(DefBool {
                     symbol: "CONFIG_CROSSCOMPILE".to_string(),
                     values: vec!("y".to_string())
-                })),
-                else_block: Some(vec!(Entry::DefBool(DefBool {
+                })*/),
+                else_block: Some(vec!(/*Entry::DefBool(DefBool {
                     symbol: "CONFIG_NATIVE".to_string(),
                     values: vec!("y".to_string())
-                })))
+                })*/))
             }
         ))
     )

@@ -10,6 +10,7 @@ use serde::Serialize;
 use crate::{
     symbol::{parse_constant_symbol, Symbol},
     util::ws,
+    ConfigInInput,
 };
 
 use super::comment::parse_prompt_option;
@@ -22,13 +23,13 @@ pub struct Hex {
     pub value: Option<String>,
 }
 
-pub fn parse_hex(input: &str) -> IResult<&str, Hex> {
+pub fn parse_hex(input: ConfigInInput) -> IResult<ConfigInInput, Hex> {
     map(
         tuple((
             ws(tag("hex")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            opt(map(parse_hex_value, |d: &str| d.to_string())),
+            opt(map(parse_hex_value, |d| d.fragment().to_string())),
         )),
         |(_, prompt, sym, value)| Hex {
             prompt: prompt.to_string(),
@@ -38,6 +39,6 @@ pub fn parse_hex(input: &str) -> IResult<&str, Hex> {
     )(input)
 }
 
-pub fn parse_hex_value(input: &str) -> IResult<&str, &str> {
+pub fn parse_hex_value(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
     preceded(space0, parse_constant_symbol)(input)
 }

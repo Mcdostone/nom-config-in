@@ -13,6 +13,7 @@ fn test_parse_source() {
             "",
             Source {
                 file: "/path/config.in".to_string(),
+                entries: vec!()
             }
         ))
     )

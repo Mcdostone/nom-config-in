@@ -14,6 +14,7 @@ use serde::Serialize;
 use crate::{
     symbol::{parse_symbol, Symbol},
     util::ws,
+    ConfigInInput,
 };
 
 // (GFS2_FS!=n) && NET && INET && (IPV6 || IPV6=n) && CONFIGFS_FS && SYSFS && (DLM=y || DLM=GFS2_FS)
@@ -35,9 +36,7 @@ pub enum CompareOperator {
 }
 
 // https://stackoverflow.com/questions/9509048/antlr-parser-for-and-or-logic-how-to-get-expressions-between-logic-operators
-
-#[derive(Debug, Serialize, PartialEq, Clone)]
-pub struct Expression(pub OrExpression);
+pub type Expression = OrExpression;
 #[derive(Debug, Serialize, PartialEq, Clone)]
 pub enum AndExpression {
     #[serde(rename = "AndTerm")]
@@ -78,7 +77,7 @@ pub enum Atom {
     String(Box<Atom>),
 }
 
-pub fn parse_or_expression(input: &str) -> IResult<&str, OrExpression> {
+pub fn parse_or_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
     map(
         tuple((
             ws(parse_and_expression),
@@ -99,7 +98,7 @@ pub fn parse_or_expression(input: &str) -> IResult<&str, OrExpression> {
     )(input)
 }
 
-pub fn parse_and_expression(input: &str) -> IResult<&str, AndExpression> {
+pub fn parse_and_expression(input: ConfigInInput) -> IResult<ConfigInInput, AndExpression> {
     map(
         tuple((
             ws(parse_term),
@@ -117,7 +116,7 @@ pub fn parse_and_expression(input: &str) -> IResult<&str, AndExpression> {
     )(input)
 }
 
-pub fn parse_term(input: &str) -> IResult<&str, Term> {
+pub fn parse_term(input: ConfigInInput) -> IResult<ConfigInInput, Term> {
     alt((
         map(
             preceded(ws(alt((tag("-n"), tag("!")))), parse_atom),
@@ -127,7 +126,7 @@ pub fn parse_term(input: &str) -> IResult<&str, Term> {
     ))(input)
 }
 
-pub fn parse_atom(input: &str) -> IResult<&str, Atom> {
+pub fn parse_atom(input: ConfigInInput) -> IResult<ConfigInInput, Atom> {
     alt((
         ws(parse_compare),
         map(delimited(tag("\""), parse_atom, tag("\"")), |d| {
@@ -143,11 +142,11 @@ pub fn parse_atom(input: &str) -> IResult<&str, Atom> {
     ))(input)
 }
 
-pub fn parse_expression(input: &str) -> IResult<&str, Expression> {
-    map(parse_or_expression, Expression)(input)
+pub fn parse_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
+    parse_or_expression(input)
 }
 
-pub fn parse_compare_operator(input: &str) -> IResult<&str, CompareOperator> {
+pub fn parse_compare_operator(input: ConfigInInput) -> IResult<ConfigInInput, CompareOperator> {
     alt((
         value(CompareOperator::GreaterOrEqual, tag(">=")),
         value(CompareOperator::LowerOrEqual, tag("<=")),
@@ -159,7 +158,7 @@ pub fn parse_compare_operator(input: &str) -> IResult<&str, CompareOperator> {
     ))(input)
 }
 
-pub fn parse_compare(input: &str) -> IResult<&str, Atom> {
+pub fn parse_compare(input: ConfigInInput) -> IResult<ConfigInInput, Atom> {
     map(
         tuple((
             ws(parse_symbol),
@@ -179,17 +178,16 @@ pub fn parse_compare(input: &str) -> IResult<&str, Atom> {
     )(input)
 }
 
-pub fn parse_if_expression_attribute(input: &str) -> IResult<&str, Expression> {
+pub fn parse_if_expression_attribute(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
     map(
         tuple((space1, tag("if"), ws(parse_expression))),
         |(_, _, e)| e,
     )(input)
 }
 
-pub fn parse_hex_number(input: &str) -> IResult<&str, i64> {
-    map_res(recognize(pair(opt(char('-')), digit1)), FromStr::from_str)(input)
-}
-
-pub fn parse_number(input: &str) -> IResult<&str, i64> {
-    map_res(recognize(pair(opt(char('-')), digit1)), FromStr::from_str)(input)
+pub fn parse_number(input: ConfigInInput) -> IResult<ConfigInInput, i64> {
+    map_res(
+        recognize(pair(opt(char('-')), digit1)),
+        |d: ConfigInInput| FromStr::from_str(d.fragment()),
+    )(input)
 }

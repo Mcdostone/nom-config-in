@@ -8,14 +8,14 @@ use nom::{
 };
 use serde::Serialize;
 
-use crate::{symbol::parse_constant_symbol, util::ws};
+use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct Unset {
     pub configs: Vec<String>,
 }
 
-pub fn parse_unset(input: &str) -> IResult<&str, Unset> {
+pub fn parse_unset(input: ConfigInInput) -> IResult<ConfigInInput, Unset> {
     map(
         tuple((
             ws(tag("unset")),
