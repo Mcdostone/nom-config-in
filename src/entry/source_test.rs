@@ -1,20 +1,35 @@
+use std::path::PathBuf;
+
 use crate::{
-    assert_parsing_eq,
-    entry::source::{parse_source, Source},
+    entry::source::{parse_source, Source}, config_in::ConfigIn, ConfigInInput, ConfigInFile,
 };
 
 #[test]
 fn test_parse_source() {
-    let input = "source /path/config.in";
-    assert_parsing_eq!(
-        parse_source,
-        input,
+    assert_parsing_source_eq(
+        "source empty",
         Ok((
             "",
             Source {
-                file: "/path/config.in".to_string(),
-                entries: vec!()
-            }
-        ))
+                file: "empty".to_string(),
+                entries: vec![],
+            },
+        )),
     )
+}
+
+
+fn assert_parsing_source_eq(
+    input: &str,
+    expected: Result<(&str, ConfigIn), nom::Err<nom::error::Error<ConfigInInput>>>,
+) {
+    let res = parse_source(ConfigInInput::new_extra(
+        input,
+        ConfigInFile {
+            root_dir: PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests"),
+            ..Default::default()
+        },
+    ))
+    .map(|r| (r.0.fragment().to_owned(), r.1));
+    assert_eq!(res, expected)
 }
