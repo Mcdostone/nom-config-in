@@ -49,6 +49,7 @@ pub mod unset;
 pub enum Entry {
     Comment(String),
     If(If),
+    //TODO Config(Type<String>),
     Bool(Type<String>),
     Tristate(Type<String>),
     String(Type<String>),

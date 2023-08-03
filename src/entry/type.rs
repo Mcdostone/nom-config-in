@@ -57,6 +57,15 @@ pub fn parse_bool_value(input: ConfigInInput) -> IResult<ConfigInInput, ConfigIn
         |d| d,
     )(input)
 }
+/*
+pub fn parse_config<T>(input: ConfigInInput) -> IResult<ConfigInInput, Type<T>> {
+    alt((
+        parse_bool,
+        parse_hex,
+        parse_tristate,
+        parse_string,
+    ))(input)
+}*/
 
 pub fn parse_hex(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
     map(
