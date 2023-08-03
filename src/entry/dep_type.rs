@@ -1,7 +1,8 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
     character::complete::space1,
-    combinator::map,
+    combinator::{map, opt},
     multi::many1,
     sequence::{preceded, tuple},
     IResult,
@@ -52,21 +53,28 @@ fn parse_dependencies(input: ConfigInInput) -> IResult<ConfigInInput, Vec<String
     ))(input)
 }
 
-pub type DepTristate = DefTypeWithValue<String>;
+pub type DepTristate = DefTypeWithValue<Option<String>>;
 pub fn parse_dep_tristate(input: ConfigInInput) -> IResult<ConfigInInput, DepTristate> {
     map(
         tuple((
             ws(tag("dep_tristate")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            ws(parse_constant_symbol),
+            opt(ws(parse_tristate_value)),
             parse_dependencies,
         )),
         |(_, p, e, i, dependencies)| DepTristate {
             prompt: p.to_string(),
             symbol: e.to_string(),
-            value: i.to_string(),
+            value: i,
             dependencies,
         },
     )(input)
+}
+
+pub fn parse_tristate_value(input: ConfigInInput) -> IResult<ConfigInInput, String> {
+    ws(map(
+        alt((tag("y"), tag("n"), tag("m"))),
+        |d: ConfigInInput| d.fragment().to_string(),
+    ))(input)
 }

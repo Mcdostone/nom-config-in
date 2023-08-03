@@ -1,4 +1,8 @@
-/*/
+use crate::{
+    assert_parsing_eq,
+    entry::dep_type::{parse_dep_bool, parse_dep_tristate, DepBool, DepTristate},
+};
+
 #[test]
 fn test_parse_dep_bool() {
     let input = "dep_bool '  ACPI support' CONFIG_ACPI $CONFIG_PM";
@@ -10,13 +14,11 @@ fn test_parse_dep_bool() {
             DepBool {
                 prompt: "  ACPI support".to_string(),
                 symbol: "CONFIG_ACPI".to_string(),
-                depends_on: vec!("$CONFIG_PM".to_string())
+                dependencies: vec!("$CONFIG_PM".to_string())
             }
         ))
     )
 }
-
-
 
 #[test]
 fn test_parse_dep_tristate() {
@@ -29,8 +31,8 @@ fn test_parse_dep_tristate() {
             DepTristate {
                 prompt: "SCSI disk support".to_string(),
                 symbol: "CONFIG_BLK_DEV_SD".to_string(),
-                value: "y".to_string(),
-                depends_on: Some("$CONFIG_SCSI".to_string())
+                value: Some("y".to_string()),
+                dependencies: vec!("$CONFIG_SCSI".to_string())
             }
         ))
     )
@@ -47,10 +49,9 @@ fn test_parse_dep_tristate_variant() {
             DepTristate {
                 prompt: "SCSI disk support".to_string(),
                 symbol: "CONFIG_BLK_DEV_SD".to_string(),
-                value: "$CONFIG_SCSI".to_string(),
-                depends_on: None,
+                value: None,
+                dependencies: vec!("$CONFIG_SCSI".to_string()),
             }
         ))
     )
 }
-*/

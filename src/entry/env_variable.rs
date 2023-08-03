@@ -1,4 +1,4 @@
-use nom::{branch::alt, bytes::complete::tag, combinator::map, sequence::tuple, IResult};
+use nom::{bytes::complete::tag, combinator::map, sequence::tuple, IResult};
 use serde::Serialize;
 
 use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
@@ -21,8 +21,4 @@ pub fn parse_env_variable(input: ConfigInInput) -> IResult<ConfigInInput, EnvVar
             value: value.to_string(),
         },
     )(input)
-}
-
-pub fn parse_bool_value(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
-    ws(alt((tag("y"), tag("n"))))(input)
 }

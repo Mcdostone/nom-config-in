@@ -1,10 +1,4 @@
-use nom::{
-    bytes::complete::tag,
-    character::complete::space0,
-    combinator::map,
-    sequence::{preceded, tuple},
-    IResult,
-};
+use nom::{bytes::complete::tag, combinator::map, sequence::tuple, IResult};
 use serde::Serialize;
 
 use crate::{
@@ -36,8 +30,4 @@ pub fn parse_hwaddr(input: ConfigInInput) -> IResult<ConfigInInput, Hwaddr> {
             value: value.fragment().to_string(),
         },
     )(input)
-}
-
-pub fn parse_hex_value(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
-    preceded(space0, parse_constant_symbol)(input)
 }

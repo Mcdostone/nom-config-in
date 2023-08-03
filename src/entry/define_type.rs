@@ -27,7 +27,7 @@ pub struct DefineType<T> {
 
 pub type DefineTristate = DefineType<String>;
 pub type DefineString = DefineType<String>;
-pub type DefineTBool = DefineType<String>;
+pub type DefineBool = DefineType<String>;
 pub type DefineHex = DefineType<String>;
 pub type DefineInt = DefineType<i64>;
 
@@ -42,6 +42,21 @@ pub fn parse_define_string(input: ConfigInInput) -> IResult<ConfigInInput, Defin
             symbol: sym.to_string(),
             r#type: TypeEnum::String,
             value,
+        },
+    )(input)
+}
+
+pub fn parse_define_bool(input: ConfigInInput) -> IResult<ConfigInInput, DefineType<String>> {
+    map(
+        tuple((
+            ws(tag("define_bool")),
+            ws(parse_constant_symbol),
+            preceded(space0, parse_constant_symbol),
+        )),
+        |(_, sym, value)| DefineType {
+            symbol: sym.to_string(),
+            r#type: TypeEnum::Bool,
+            value: value.to_string(),
         },
     )(input)
 }

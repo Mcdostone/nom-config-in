@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 
 use crate::{
-    entry::source::{parse_source, Source}, config_in::ConfigIn, ConfigInInput, ConfigInFile,
+    config_in::ConfigIn,
+    entry::source::{parse_source, Source},
+    ConfigInFile, ConfigInInput,
 };
 
 #[test]
@@ -17,7 +19,6 @@ fn test_parse_source() {
         )),
     )
 }
-
 
 fn assert_parsing_source_eq(
     input: &str,

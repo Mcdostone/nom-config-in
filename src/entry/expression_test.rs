@@ -65,6 +65,26 @@ fn test_parse_depends_on_ambigus() {
 }
 
 #[test]
+fn test_parse_expression_parenthesis() {
+    assert_parsing_eq!(
+        parse_expression,
+        "(hello = world)",
+        Ok((
+            "",
+            Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                Box::new(Expression::Term(AndExpression::Term(Term::Atom(
+                    Atom::Compare(CompareExpression {
+                        left: "hello".to_string(),
+                        operator: CompareOperator::Equal,
+                        right: "world".to_string()
+                    })
+                ))))
+            ))))
+        ))
+    )
+}
+
+#[test]
 fn test_parse_depends_on_optimization() {
     assert_parsing_eq!(
         parse_expression,

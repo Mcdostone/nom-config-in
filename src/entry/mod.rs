@@ -11,8 +11,8 @@ use self::{
     comment::parse_comment,
     define::{parse_define, Define},
     define_type::{
-        parse_define_hex, parse_define_int, parse_define_string, parse_define_tristate,
-        DefineTristate, DefineType,
+        parse_define_bool, parse_define_hex, parse_define_int, parse_define_string,
+        parse_define_tristate, DefineTristate, DefineType,
     },
     dep_type::{parse_dep_bool, parse_dep_tristate, DepBool, DepTristate},
     echo::{parse_echo, Echo},
@@ -57,6 +57,7 @@ pub enum Entry {
     DepBool(DepBool),
     DepTristate(DepTristate),
     DefineTristate(DefineTristate),
+    DefineBool(DefineType<String>),
     DefineInt(DefineType<i64>),
     DefineHex(DefineType<String>),
     DefineString(DefineType<String>),
@@ -83,6 +84,7 @@ pub fn parse_entry(input: ConfigInInput) -> IResult<ConfigInInput, Entry> {
             map(ws(parse_define_int), Entry::DefineInt),
             map(ws(parse_define_tristate), Entry::DefineTristate),
             map(ws(parse_hwaddr), Entry::Hwaddr),
+            map(ws(parse_define_bool), Entry::DefineBool),
         )),
         map(ws(parse_exec), Entry::Exec),
         //map(ws(parse_def_bool), Entry::DefBool),
@@ -137,6 +139,8 @@ pub mod if_test;
 mod main_menu_name_test;
 #[cfg(test)]
 pub mod main_menu_option_test;
+#[cfg(test)]
+mod mod_test;
 #[cfg(test)]
 pub mod source_test;
 #[cfg(test)]

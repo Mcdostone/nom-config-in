@@ -36,7 +36,7 @@ pub fn parse_symbol(input: ConfigInInput) -> IResult<ConfigInInput, Symbol> {
 
 pub fn parse_constant_symbol(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
     map(
-        recognize(many1(alt((alphanumeric1, recognize(one_of("(),._-/$+")))))),
+        recognize(many1(alt((alphanumeric1, recognize(one_of(",._-/$+")))))),
         |c: ConfigInInput| c,
     )(input)
 }

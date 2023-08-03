@@ -20,10 +20,9 @@ pub mod symbol;
 pub mod util;
 
 #[cfg(test)]
-mod lib_test;
-
-#[cfg(test)]
 pub mod config_test;
+#[cfg(test)]
+mod lib_test;
 #[cfg(test)]
 pub mod symbol_test;
 #[cfg(test)]

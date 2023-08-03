@@ -1,19 +1,20 @@
 use crate::{
     assert_parsing_eq,
-    config_in::parse_config,
     entry::{
         define_type::DefineBool,
+        parse_entries,
         r#type::{Type, TypeEnum},
         Entry,
     },
 };
 
 #[test]
-fn test_parse_file() {
-    let input = "bool 'Using SRM as bootloader' CONFIG_ALPHA_SRM
+fn test_parse_entries() {
+    let input = "#a comment
+    bool 'Using SRM as bootloader' CONFIG_ALPHA_SRM
     define_bool CONFIG_PCI y";
     assert_parsing_eq!(
-        parse_config,
+        parse_entries,
         input,
         Ok((
             "",

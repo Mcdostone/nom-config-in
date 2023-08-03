@@ -75,7 +75,7 @@ pub fn parse_until_eol(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInI
 /// # Example
 /// ```
 /// use nom::bytes::complete::tag;
-/// use nom_kconfig::util::wsi;
+/// use nom_config_in::util::wsi;
 /// let input = r#"   \
 /// hello"#;
 /// assert_eq!(wsi(tag::<&str, &str, ()>("hello"))(input), Ok(("", "hello")))

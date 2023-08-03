@@ -3,7 +3,7 @@ use std::str::FromStr;
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{char, digit1, space1},
+    character::complete::{char, digit1},
     combinator::{map, map_res, opt, recognize, value},
     multi::many0,
     sequence::{delimited, pair, preceded, tuple},
@@ -32,6 +32,7 @@ pub enum CompareOperator {
     LowerThan,
     LowerOrEqual,
     Equal,
+    DoubleEqual,
     NotEqual,
 }
 
@@ -74,6 +75,7 @@ pub enum Atom {
     Number(i64),
     Compare(CompareExpression),
     Parenthesis(Box<Expression>),
+    Bracket(Box<Expression>),
     String(Box<Atom>),
 }
 
@@ -128,16 +130,20 @@ pub fn parse_term(input: ConfigInInput) -> IResult<ConfigInInput, Term> {
 
 pub fn parse_atom(input: ConfigInInput) -> IResult<ConfigInInput, Atom> {
     alt((
+        map(
+            delimited(ws(tag("(")), parse_expression, ws(tag(")"))),
+            |expr| Atom::Parenthesis(Box::new(expr)),
+        ),
+        map(
+            delimited(ws(tag("[")), parse_expression, ws(tag("]"))),
+            |expr| Atom::Bracket(Box::new(expr)),
+        ),
         ws(parse_compare),
         map(delimited(tag("\""), parse_atom, tag("\"")), |d| {
             Atom::String(Box::new(d))
         }),
         map(parse_number, Atom::Number),
         map(parse_symbol, Atom::Symbol),
-        map(
-            delimited(ws(tag("[")), parse_expression, ws(tag("]"))),
-            |expr| Atom::Parenthesis(Box::new(expr)),
-        ),
         map(parse_symbol, Atom::Symbol),
     ))(input)
 }
@@ -152,7 +158,7 @@ pub fn parse_compare_operator(input: ConfigInInput) -> IResult<ConfigInInput, Co
         value(CompareOperator::LowerOrEqual, tag("<=")),
         value(CompareOperator::GreaterThan, tag(">")),
         value(CompareOperator::LowerThan, tag("<")),
-        value(CompareOperator::Equal, tag("==")),
+        value(CompareOperator::DoubleEqual, tag("==")),
         value(CompareOperator::Equal, tag("=")),
         value(CompareOperator::NotEqual, tag("!=")),
     ))(input)
@@ -175,13 +181,6 @@ pub fn parse_compare(input: ConfigInInput) -> IResult<ConfigInInput, Atom> {
                 right: r,
             })
         },
-    )(input)
-}
-
-pub fn parse_if_expression_attribute(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
-    map(
-        tuple((space1, tag("if"), ws(parse_expression))),
-        |(_, _, e)| e,
     )(input)
 }
 

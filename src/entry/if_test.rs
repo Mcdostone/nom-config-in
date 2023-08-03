@@ -1,7 +1,8 @@
 use crate::entry::{
+    define_type::DefineBool,
     expression::{AndExpression, Atom, CompareExpression, CompareOperator, Expression, Term},
     r#if::{parse_if, If},
-    r#type::Type,
+    r#type::{Type, TypeEnum},
     Entry,
 };
 
@@ -17,7 +18,7 @@ fn test_parse_if_entry() {
         Ok((
             "",
             If {
-                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
                     Box::new(Expression::Term(AndExpression::Term(Term::Atom(
                         Atom::Compare(CompareExpression {
                             left: "\"$CONFIG_SCSI\"".to_string(),
@@ -45,7 +46,7 @@ fn test_parse_if_entry_quote_operator() {
         Ok((
             "",
             If {
-                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
                     Box::new(Expression::Term(AndExpression::Term(Term::Atom(
                         Atom::Compare(CompareExpression {
                             left: "\"$CONFIG_SCSI\"".to_string(),
@@ -73,7 +74,7 @@ fn test_parse_if_else_entry() {
         Ok((
             "",
             If {
-                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
                     Box::new(Expression::Term(AndExpression::Term(Term::Atom(
                         Atom::Compare(CompareExpression {
                             left: "\"$CONFIG_SCSI\"".to_string(),
@@ -105,7 +106,7 @@ fn test_parse_if_else_backtick() {
         Ok((
             "",
             If {
-                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Parenthesis(
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
                     Box::new(Expression::Term(AndExpression::Term(Term::Atom(
                         Atom::Compare(CompareExpression {
                             left: "\"`uname`\"".to_string(),
@@ -114,14 +115,16 @@ fn test_parse_if_else_backtick() {
                         })
                     ))))
                 )))),
-                if_block: vec!(/*Entry::DefBool(DefBool {
+                if_block: vec!(Entry::DefineBool(DefineBool {
                     symbol: "CONFIG_CROSSCOMPILE".to_string(),
-                    values: vec!("y".to_string())
-                })*/),
-                else_block: Some(vec!(/*Entry::DefBool(DefBool {
+                    value: "y".to_string(),
+                    r#type: TypeEnum::Bool,
+                })),
+                else_block: Some(vec!(Entry::DefineBool(DefineBool {
                     symbol: "CONFIG_NATIVE".to_string(),
-                    values: vec!("y".to_string())
-                })*/))
+                    value: "y".to_string(),
+                    r#type: TypeEnum::Bool,
+                })),)
             }
         ))
     )

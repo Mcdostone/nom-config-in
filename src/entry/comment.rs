@@ -24,10 +24,6 @@ pub fn parse_comment(input: ConfigInInput) -> IResult<ConfigInInput, String> {
     )(input)
 }
 
-pub fn t(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
-    take_until("'")(input)
-}
-
 pub fn parse_prompt_option(input: ConfigInInput) -> IResult<ConfigInInput, String> {
     map(
         alt((
