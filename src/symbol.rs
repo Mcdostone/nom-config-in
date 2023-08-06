@@ -1,11 +1,11 @@
 use nom::{
     branch::alt,
-    bytes::complete::take_until,
+    bytes::complete::{tag, take_until},
     character::complete::char,
     character::complete::{alphanumeric1, one_of},
     combinator::{map, recognize},
     multi::many1,
-    sequence::delimited,
+    sequence::{delimited, preceded},
     IResult,
 };
 
@@ -39,4 +39,13 @@ pub fn parse_constant_symbol(input: ConfigInInput) -> IResult<ConfigInInput, Con
         recognize(many1(alt((alphanumeric1, recognize(one_of(",._-/$+")))))),
         |c: ConfigInInput| c,
     )(input)
+}
+
+pub fn parse_constant_symbol_or_variable(input: ConfigInInput) -> IResult<ConfigInInput, String> {
+    alt((
+        map(preceded(tag("$"), parse_constant_symbol), |f| {
+            format!("${}", f)
+        }),
+        map(parse_symbol, |d| d.to_string()),
+    ))(input)
 }

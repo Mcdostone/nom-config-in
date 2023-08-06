@@ -99,7 +99,10 @@ fn test_parse_if_else_entry() {
 
 #[test]
 fn test_parse_if_else_backtick() {
-    let input = r#"if [ "`uname`" != "Linux" ]; then define_bool CONFIG_CROSSCOMPILE y else define_bool CONFIG_NATIVE y fi"#;
+    let input = r#"if [ "`uname`" != "Linux" ]; then define_bool CONFIG_CROSSCOMPILE y 
+    else 
+    define_bool CONFIG_NATIVE y 
+    fi"#;
     assert_parsing_eq!(
         parse_if,
         input,
@@ -117,12 +120,12 @@ fn test_parse_if_else_backtick() {
                 )))),
                 if_block: vec!(Entry::DefineBool(DefineBool {
                     symbol: "CONFIG_CROSSCOMPILE".to_string(),
-                    value: "y".to_string(),
+                    value: vec!("y".to_string()),
                     r#type: TypeEnum::Bool,
                 })),
                 else_block: Some(vec!(Entry::DefineBool(DefineBool {
                     symbol: "CONFIG_NATIVE".to_string(),
-                    value: "y".to_string(),
+                    value: vec!("y".to_string()),
                     r#type: TypeEnum::Bool,
                 })),)
             }
@@ -144,8 +147,9 @@ fn test_parse_if_file_exists() {
             If {
                 condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
                     Box::new(Expression::Term(AndExpression::Term(Term::Atom(
-                        Atom::Existance("drivers/net/soundmodem/sm_afsk2666.c".to_string()
-                    ))))))))),
+                        Atom::Existance("drivers/net/soundmodem/sm_afsk2666.c".to_string())
+                    ))))
+                )))),
                 if_block: vec!(Entry::Bool(Type {
                     prompt: "Soundmodem support for 2666 baud AFSK modulation".to_string(),
                     symbol: "CONFIG_SOUNDMODEM_AFSK2666".to_string(),
@@ -158,4 +162,44 @@ fn test_parse_if_file_exists() {
     )
 }
 
-
+// 2.4.25/arch/cris/drivers/Config.in
+#[test]
+fn test_parse_if_variant_2() {
+    let input = r#"if [ "$CONFIG_MTD_CFI" = "n" ] && [ "$CONFIG_MTD_AMDSTD" = "n" ] && \
+    [ "$CONFIG_MTD_MTDRAM" = "n" ]; then
+    fi"#;
+    assert_parsing_eq!(
+        parse_if,
+        input,
+        Ok((
+            "",
+            If {
+                condition: Expression::Term(AndExpression::Expression(vec!(
+                    Term::Atom(Atom::Bracket(Box::new(Expression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"$CONFIG_MTD_CFI\"".to_string(),
+                            operator: CompareOperator::Equal,
+                            right: "\"n\"".to_string()
+                        })))
+                    )))),
+                    Term::Atom(Atom::Bracket(Box::new(Expression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"$CONFIG_MTD_AMDSTD\"".to_string(),
+                            operator: CompareOperator::Equal,
+                            right: "\"n\"".to_string()
+                        })))
+                    )))),
+                    Term::Atom(Atom::Bracket(Box::new(Expression::Term(
+                        AndExpression::Term(Term::Atom(Atom::Compare(CompareExpression {
+                            left: "\"$CONFIG_MTD_MTDRAM\"".to_string(),
+                            operator: CompareOperator::Equal,
+                            right: "\"n\"".to_string()
+                        })))
+                    ))))
+                ))),
+                if_block: vec!(),
+                else_block: None
+            }
+        ))
+    )
+}

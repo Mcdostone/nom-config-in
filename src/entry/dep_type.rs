@@ -1,15 +1,19 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{space1, line_ending},
-    combinator::{map, opt, value, eof},
-    multi::many1,
-    sequence::{preceded, tuple},
+    character::complete::line_ending,
+    combinator::{eof, map, opt, value},
+    multi::many0,
+    sequence::tuple,
     IResult,
 };
 use serde::Serialize;
 
-use crate::{symbol::{parse_constant_symbol, parse_symbol}, util::{ws, wsi}, ConfigInInput};
+use crate::{
+    symbol::{parse_constant_symbol, parse_symbol},
+    util::{ws, wsi},
+    ConfigInInput,
+};
 
 use super::comment::parse_prompt_option;
 
@@ -47,7 +51,6 @@ pub fn parse_dep_bool(input: ConfigInInput) -> IResult<ConfigInInput, DepBool> {
     )(input)
 }
 
-
 pub fn parse_dep_mbool(input: ConfigInInput) -> IResult<ConfigInInput, DepMbool> {
     map(
         tuple((
@@ -64,12 +67,8 @@ pub fn parse_dep_mbool(input: ConfigInInput) -> IResult<ConfigInInput, DepMbool>
     )(input)
 }
 
-
 fn parse_dependencies(input: ConfigInInput) -> IResult<ConfigInInput, Vec<String>> {
-    many1(preceded(
-        space1,
-        map(parse_symbol, |d| d.to_string()),
-    ))(input)
+    many0(map(wsi(parse_symbol), |d| d.to_string()))(input)
 }
 
 pub type DepTristate = DefTypeWithValue<Option<String>>;
@@ -77,13 +76,13 @@ pub fn parse_dep_tristate(input: ConfigInInput) -> IResult<ConfigInInput, DepTri
     map(
         tuple((
             ws(tag("dep_tristate")),
-            ws(parse_prompt_option),
-            ws(parse_constant_symbol),
-            opt(ws(parse_tristate_value)),
+            wsi(parse_prompt_option),
+            wsi(parse_constant_symbol),
+            opt(wsi(parse_tristate_value)),
             alt((
-                parse_dependencies,
-                value(vec!(), wsi(line_ending)),
-                value(vec!(), wsi(eof)),
+                wsi(parse_dependencies),
+                value(vec![], wsi(line_ending)),
+                value(vec![], wsi(eof)),
             )),
         )),
         |(_, p, e, i, dependencies)| DepTristate {

@@ -1,11 +1,3 @@
-use crate::{
-    assert_parsing_eq,
-    entry::{
-        define_type::DefineBool,
-        r#type::{Type, TypeEnum},
-        Entry,
-    },
-};
 /*
 #[test]
 fn test_parse_entries() {

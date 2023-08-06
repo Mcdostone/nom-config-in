@@ -3,12 +3,17 @@ use nom::{
     bytes::complete::tag,
     character::complete::{line_ending, not_line_ending, space0},
     combinator::{eof, map, opt},
-    sequence::{pair, preceded, terminated, tuple},
-    IResult, multi::{many1, many0},
+    multi::many0,
+    sequence::{preceded, terminated, tuple},
+    IResult,
 };
 use serde::Serialize;
 
-use crate::{symbol::parse_constant_symbol, util::{ws, wsi}, ConfigInInput};
+use crate::{
+    symbol::parse_constant_symbol,
+    util::{ws, wsi},
+    ConfigInInput,
+};
 
 use super::{comment::parse_prompt_option, expression::parse_number};
 
@@ -90,11 +95,10 @@ pub fn parse_hex_value(input: ConfigInInput) -> IResult<ConfigInInput, String> {
 pub type Int = Vec<IntValue>;
 pub type Hex = Vec<String>;
 
-
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum IntValue {
     Number(i64),
-    Variable(String)
+    Variable(String),
 }
 
 pub fn parse_int(input: ConfigInInput) -> IResult<ConfigInInput, Type<Int>> {
@@ -103,22 +107,24 @@ pub fn parse_int(input: ConfigInInput) -> IResult<ConfigInInput, Type<Int>> {
             ws(tag("int")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            many1(wsi(parse_int_value)),
+            many0(wsi(parse_int_value)),
         )),
         |(_, prompt, sym, value)| Type {
             prompt: prompt.to_string(),
             symbol: sym.to_string(),
             r#type: TypeEnum::Int,
-            value: value,
+            value,
         },
     )(input)
 }
 
 pub fn parse_int_value(input: ConfigInInput) -> IResult<ConfigInInput, IntValue> {
-        alt((
-            map(wsi(map(parse_number, |s| s)), IntValue::Number),
-            map(wsi(map(parse_constant_symbol, |s| s)), |s| IntValue::Variable(s.to_string())),
-        ))(input)
+    alt((
+        map(wsi(map(parse_number, |s| s)), IntValue::Number),
+        map(wsi(map(parse_constant_symbol, |s| s)), |s| {
+            IntValue::Variable(s.to_string())
+        }),
+    ))(input)
 }
 
 pub fn parse_tristate(input: ConfigInInput) -> IResult<ConfigInInput, Type<Option<String>>> {
@@ -127,7 +133,10 @@ pub fn parse_tristate(input: ConfigInInput) -> IResult<ConfigInInput, Type<Optio
             ws(tag("tristate")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            opt(preceded(space0, map(parse_tristate_value, |d| d.to_string()))),
+            opt(preceded(
+                space0,
+                map(parse_tristate_value, |d| d.to_string()),
+            )),
         )),
         |(_, p, e, i)| Type {
             prompt: p.to_string(),

@@ -1,9 +1,10 @@
 use nom::{
+    branch::alt,
     bytes::complete::tag,
-    combinator::{map, eof, recognize, peek},
+    combinator::{eof, map},
     multi::many0,
     sequence::{pair, preceded, tuple},
-    IResult, branch::alt,
+    IResult,
 };
 use serde::Serialize;
 

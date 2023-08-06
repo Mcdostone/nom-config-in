@@ -1,6 +1,8 @@
 use crate::{
     assert_parsing_eq,
-    entry::r#type::{parse_bool, parse_hex, parse_int, parse_string, parse_tristate, Type, IntValue},
+    entry::r#type::{
+        parse_bool, parse_hex, parse_int, parse_string, parse_tristate, IntValue, Type,
+    },
 };
 
 #[test]
@@ -38,7 +40,6 @@ fn test_parse_bool_ref() {
         ))
     )
 }
-
 
 #[test]
 fn test_parse_bool_no_value() {
@@ -79,7 +80,8 @@ fn test_parse_hex() {
 // 2.2.0/drivers/sound/lowlevel/Config.in
 #[test]
 fn test_parse_hex_variant() {
-    let input = "hex 'I/O base for Audio Excel DSP 16 220, 240' CONFIG_AEDSP16_BASE $CONFIG_SB_BASE 220";
+    let input =
+        "hex 'I/O base for Audio Excel DSP 16 220, 240' CONFIG_AEDSP16_BASE $CONFIG_SB_BASE 220";
     assert_parsing_eq!(
         parse_hex,
         input,
@@ -94,7 +96,6 @@ fn test_parse_hex_variant() {
         ))
     )
 }
-
 
 // 2.2.0/drivers/sound/lowlevel/Config.in
 #[test]
@@ -116,10 +117,6 @@ fn test_parse_hex_variant_1() {
     )
 }
 
-
-
-
-
 #[test]
 fn test_parse_int() {
     let input = "int ' number of ftape buffers' NR_FTAPE_BUFFERS 3";
@@ -137,7 +134,6 @@ fn test_parse_int() {
         ))
     )
 }
-
 
 // 2.1.28/drivers/sound/Config.in
 #[test]
@@ -172,16 +168,35 @@ fn test_parse_int_variant() {
                 symbol: "CONFIG_SCSI_PPA_HAVE_PEDANTIC".to_string(),
                 prompt: "  Pedantic EPP-checking".to_string(),
                 r#type: crate::entry::r#type::TypeEnum::Int,
-                value: vec!(IntValue::Number(2), IntValue::Number(0), IntValue::Number(3)),
+                value: vec!(
+                    IntValue::Number(2),
+                    IntValue::Number(0),
+                    IntValue::Number(3)
+                ),
             }
         ))
     )
 }
 
-
-
-
-
+// 2.4.22/arch/cris/drivers/Config.in
+#[test]
+fn test_parse_int_variant_2() {
+    let input =
+        "int '  Extern clock frequency (baudrate=clk/8) (Hz)' CONFIG_ETRAX_EXTERN_PB6CLK_FREQ";
+    assert_parsing_eq!(
+        parse_int,
+        input,
+        Ok((
+            "",
+            Type {
+                symbol: "CONFIG_ETRAX_EXTERN_PB6CLK_FREQ".to_string(),
+                prompt: "  Extern clock frequency (baudrate=clk/8) (Hz)".to_string(),
+                r#type: crate::entry::r#type::TypeEnum::Int,
+                value: vec!(),
+            }
+        ))
+    )
+}
 
 #[test]
 fn test_parse_string() {
@@ -218,7 +233,6 @@ fn test_parse_tristate() {
         ))
     )
 }
-
 
 // 2.1.132/arch/alpha/Config.in
 #[test]

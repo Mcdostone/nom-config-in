@@ -39,22 +39,20 @@ fn test_parse_choice_variant() {
                 prompt: "Processor type".to_string(),
                 entries: vec!(
                     ChoiceOption {
-                    left: "6xx/7xx".to_string(),
-                    right: "CONFIG_6xx".to_string()
+                        left: "6xx/7xx".to_string(),
+                        right: "CONFIG_6xx".to_string()
                     },
                     ChoiceOption {
                         left: "630/Power3(64-Bit)".to_string(),
                         right: "CONFIG_PPC64".to_string()
-                        },
-                        ChoiceOption {
-                            left: "860/821".to_string(),
-                            right: "CONFIG_8xx".to_string()
-                            },
+                    },
+                    ChoiceOption {
+                        left: "860/821".to_string(),
+                        right: "CONFIG_8xx".to_string()
+                    },
                 ),
                 default: "6xx/7xx".to_string()
             }
         ))
     )
 }
-
-

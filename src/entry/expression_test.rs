@@ -107,7 +107,6 @@ fn test_parse_depends_on_optimization() {
         ))))
 }
 
-
 #[test]
 fn test_parse_expression_file_exists() {
     let input = "[ -f drivers/net/soundmodem/sm_afsk2666.c ]";
@@ -116,12 +115,11 @@ fn test_parse_expression_file_exists() {
         input,
         Ok((
             "",
-            Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
-                    Box::new(Expression::Term(AndExpression::Term(Term::Atom(
-                        Atom::Existance("drivers/net/soundmodem/sm_afsk2666.c".to_string()))
-                    )))))))
+            Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(Box::new(
+                Expression::Term(AndExpression::Term(Term::Atom(Atom::Existance(
+                    "drivers/net/soundmodem/sm_afsk2666.c".to_string()
+                ))))
+            )))))
         ))
     )
 }
-
-

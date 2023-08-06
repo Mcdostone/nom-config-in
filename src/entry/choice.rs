@@ -1,17 +1,17 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
+    character::complete::{alphanumeric1, one_of},
     combinator::{map, recognize},
     multi::many1,
     sequence::{delimited, pair, tuple},
-    IResult, character::complete::{alphanumeric1, one_of},
+    IResult,
 };
 use serde::Serialize;
 
 use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
 use super::comment::parse_prompt_option;
-
 
 fn parse_choice_option_label(input: ConfigInInput) -> IResult<ConfigInInput, String> {
     map(

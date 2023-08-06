@@ -2,6 +2,7 @@ use nom::{
     bytes::complete::tag,
     character::complete::space0,
     combinator::map,
+    multi::many1,
     sequence::{preceded, tuple},
     IResult,
 };
@@ -27,7 +28,7 @@ pub struct DefineType<T> {
 
 pub type DefineTristate = DefineType<String>;
 pub type DefineString = DefineType<String>;
-pub type DefineBool = DefineType<String>;
+pub type DefineBool = DefineType<Vec<String>>;
 pub type DefineHex = DefineType<String>;
 pub type DefineInt = DefineType<i64>;
 
@@ -46,21 +47,20 @@ pub fn parse_define_string(input: ConfigInInput) -> IResult<ConfigInInput, Defin
     )(input)
 }
 
-pub fn parse_define_bool(input: ConfigInInput) -> IResult<ConfigInInput, DefineType<String>> {
+pub fn parse_define_bool(input: ConfigInInput) -> IResult<ConfigInInput, DefineType<Vec<String>>> {
     map(
         tuple((
             ws(tag("define_bool")),
             ws(parse_constant_symbol),
-            preceded(space0, parse_symbol),
+            many1(wsi(map(parse_symbol, |f| f.to_string()))),
         )),
         |(_, sym, value)| DefineType {
             symbol: sym.to_string(),
             r#type: TypeEnum::Bool,
-            value: value.to_string(),
+            value,
         },
     )(input)
 }
-
 pub fn parse_define_hex(input: ConfigInInput) -> IResult<ConfigInInput, DefineType<String>> {
     map(
         tuple((

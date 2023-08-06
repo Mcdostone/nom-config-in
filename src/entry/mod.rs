@@ -1,34 +1,33 @@
-use nom::{branch::alt, combinator::map, multi::many0, sequence::delimited, IResult};
+use nom::{branch::alt, combinator::map, IResult};
 use serde::Serialize;
 
-use crate::{
-    util::{ws, ws_comment},
-    ConfigInInput,
-};
+use crate::{util::ws, ConfigInInput};
 
 use self::{
     choice::{parse_choice, Choice},
+    command::parse_command,
     comment::parse_comment,
     define::{parse_define, Define},
     define_type::{
         parse_define_bool, parse_define_hex, parse_define_int, parse_define_string,
         parse_define_tristate, DefineTristate, DefineType,
     },
-    dep_type::{parse_dep_bool, parse_dep_tristate, DepBool, DepTristate, DepMbool, parse_dep_mbool},
-    echo::{parse_echo, Echo},
+    dep_type::{
+        parse_dep_bool, parse_dep_mbool, parse_dep_tristate, DepBool, DepMbool, DepTristate,
+    },
     env_variable::{parse_env_variable, EnvVariable},
     exec::{parse_exec, Exec},
     hwaddr::{parse_hwaddr, Hwaddr},
     main_menu_name::{parse_main_menu_name, MainMenuName},
     main_menu_option::{parse_main_menu_option, MainMenuOption},
     r#if::{parse_if, If},
-    r#type::{parse_bool, parse_hex, parse_int, parse_string, parse_tristate, Int, Type, Hex},
+    r#type::{parse_bool, parse_hex, parse_int, parse_string, parse_tristate, Hex, Int, Type},
     source::{parse_source, Source},
-    unset::{parse_unset, Unset}, command::parse_command,
+    unset::{parse_unset, Unset},
 };
 
-pub mod command;
 pub mod choice;
+pub mod command;
 pub mod comment;
 pub mod def_bool;
 pub mod define;
@@ -60,12 +59,12 @@ pub enum Entry {
     DepBool(DepBool),
     DepTristate(DepTristate),
     DefineTristate(DefineTristate),
-    DefineBool(DefineType<String>),
+    DefineBool(DefineType<Vec<String>>),
     DefineInt(DefineType<i64>),
     DefineHex(DefineType<String>),
     DefineString(DefineType<String>),
     Exec(Exec),
-//    Echo(Echo),
+    //    Echo(Echo),
     EnvVariable(EnvVariable),
     Unset(Unset),
     MainMenuName(MainMenuName),
@@ -115,6 +114,8 @@ pub fn parse_entry(input: ConfigInInput) -> IResult<ConfigInInput, Entry> {
 #[cfg(test)]
 mod choice_test;
 #[cfg(test)]
+mod command_test;
+#[cfg(test)]
 mod comment_test;
 #[cfg(test)]
 mod def_bool_test;
@@ -148,5 +149,3 @@ pub mod source_test;
 mod type_test;
 #[cfg(test)]
 mod unset_test;
-#[cfg(test)]
-mod command_test;

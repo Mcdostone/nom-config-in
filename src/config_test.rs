@@ -27,13 +27,12 @@ fn test_parse_file() {
                 Entry::DefineBool(DefineBool {
                     symbol: "CONFIG_PCI".to_string(),
                     r#type: TypeEnum::Bool,
-                    value: "y".to_string()
+                    value: vec!("y".to_string())
                 })
             )
         ))
     )
 }
-
 
 #[test]
 fn test_parse_command() {
@@ -43,10 +42,9 @@ fn test_parse_command() {
         input,
         Ok((
             "",
-            vec!(
-                Entry::Command("$MAKE -C drivers/sound config || exit 1".to_string()),
-            )
+            vec!(Entry::Command(
+                "$MAKE -C drivers/sound config || exit 1".to_string()
+            ),)
         ))
     )
 }
-

@@ -6,7 +6,7 @@ use nom::{
     character::complete::{char, digit1},
     combinator::{map, map_res, opt, recognize, value},
     multi::many0,
-    sequence::{delimited, pair, preceded, tuple, terminated},
+    sequence::{delimited, pair, preceded, tuple},
     IResult,
 };
 use serde::Serialize;
@@ -87,7 +87,7 @@ pub fn parse_or_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expre
         tuple((
             ws(parse_and_expression),
             many0(preceded(
-                alt((ws(tag("-o")), ws(tag("||")))),
+                alt((wsi(tag("-o")), wsi(tag("||")))),
                 ws(parse_and_expression),
             )),
         )),
@@ -106,8 +106,8 @@ pub fn parse_or_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expre
 pub fn parse_and_expression(input: ConfigInInput) -> IResult<ConfigInInput, AndExpression> {
     map(
         tuple((
-            ws(parse_term),
-            many0(preceded(ws(tag("-a")), ws(parse_term))),
+            wsi(parse_term),
+            many0(preceded(wsi(alt((tag("-a"), tag("&&")))), wsi(parse_term))),
         )),
         |(l, ee)| {
             if ee.is_empty() {
@@ -155,8 +155,6 @@ pub fn parse_entry_exists(input: ConfigInInput) -> IResult<ConfigInInput, String
     //let t = tag("-f")(input);
     map(preceded(wsi(tag("-f")), wsi(parse_path)), |f| f.to_string())(input)
 }
-
-
 
 pub fn parse_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
     parse_or_expression(input)
