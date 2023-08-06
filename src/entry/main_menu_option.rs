@@ -1,9 +1,9 @@
 use nom::{
     bytes::complete::tag,
-    combinator::map,
+    combinator::{map, eof, recognize, peek},
     multi::many0,
     sequence::{pair, preceded, tuple},
-    IResult,
+    IResult, branch::alt,
 };
 use serde::Serialize;
 
@@ -22,7 +22,12 @@ pub fn parse_main_menu_option(input: ConfigInInput) -> IResult<ConfigInInput, Ma
                 ws(parse_comment),
             ),
             many0(ws(parse_entry)),
-            ws(tag("endmenu")),
+            alt((
+                ws(tag("endmenu")),
+                //ws(peek(tag("fi"))),
+                //ws(peek(tag("mainmenu_option"))),
+                ws(eof),
+            )),
         )),
         |(d, e, _)| MainMenuOption {
             comment: d,

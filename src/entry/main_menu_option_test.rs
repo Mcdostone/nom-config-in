@@ -25,7 +25,7 @@ fn test_parse_main_menu_endmenu() {
                     r#type: TypeEnum::Bool,
                     prompt: "Kernel profiling support".to_string(),
                     symbol: "CONFIG_PROFILE".to_string(),
-                    value: None
+                    value: vec!()
                 }))
             }
         ))

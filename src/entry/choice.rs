@@ -1,10 +1,10 @@
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    combinator::map,
+    combinator::{map, recognize},
     multi::many1,
     sequence::{delimited, pair, tuple},
-    IResult,
+    IResult, character::complete::{alphanumeric1, one_of},
 };
 use serde::Serialize;
 
@@ -12,11 +12,19 @@ use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
 
 use super::comment::parse_prompt_option;
 
+
+fn parse_choice_option_label(input: ConfigInInput) -> IResult<ConfigInInput, String> {
+    map(
+        recognize(many1(alt((alphanumeric1, recognize(one_of(",._()-/$+")))))),
+        |c: ConfigInInput| c.to_string(),
+    )(input)
+}
+
 fn parse_choice_option(input: ConfigInInput) -> IResult<ConfigInInput, ChoiceOption> {
     map(
-        tuple((ws(parse_constant_symbol), ws(parse_constant_symbol))),
+        tuple((ws(parse_choice_option_label), ws(parse_constant_symbol))),
         |(l, r)| ChoiceOption {
-            left: l.to_string(),
+            left: l,
             right: r.to_string(),
         },
     )(input)

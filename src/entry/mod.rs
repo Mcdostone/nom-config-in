@@ -14,7 +14,7 @@ use self::{
         parse_define_bool, parse_define_hex, parse_define_int, parse_define_string,
         parse_define_tristate, DefineTristate, DefineType,
     },
-    dep_type::{parse_dep_bool, parse_dep_tristate, DepBool, DepTristate},
+    dep_type::{parse_dep_bool, parse_dep_tristate, DepBool, DepTristate, DepMbool, parse_dep_mbool},
     echo::{parse_echo, Echo},
     env_variable::{parse_env_variable, EnvVariable},
     exec::{parse_exec, Exec},
@@ -22,11 +22,12 @@ use self::{
     main_menu_name::{parse_main_menu_name, MainMenuName},
     main_menu_option::{parse_main_menu_option, MainMenuOption},
     r#if::{parse_if, If},
-    r#type::{parse_bool, parse_hex, parse_int, parse_string, parse_tristate, Int, Type},
+    r#type::{parse_bool, parse_hex, parse_int, parse_string, parse_tristate, Int, Type, Hex},
     source::{parse_source, Source},
-    unset::{parse_unset, Unset},
+    unset::{parse_unset, Unset}, command::parse_command,
 };
 
+pub mod command;
 pub mod choice;
 pub mod comment;
 pub mod def_bool;
@@ -50,11 +51,12 @@ pub enum Entry {
     Comment(String),
     If(If),
     //TODO Config(Type<String>),
-    Bool(Type<String>),
-    Tristate(Type<String>),
+    Bool(Type<Vec<String>>),
+    Tristate(Type<Option<String>>),
     String(Type<String>),
-    Hex(Type<String>),
+    Hex(Type<Hex>),
     Int(Type<Int>),
+    DepMbool(DepMbool),
     DepBool(DepBool),
     DepTristate(DepTristate),
     DefineTristate(DefineTristate),
@@ -63,7 +65,7 @@ pub enum Entry {
     DefineHex(DefineType<String>),
     DefineString(DefineType<String>),
     Exec(Exec),
-    Echo(Echo),
+//    Echo(Echo),
     EnvVariable(EnvVariable),
     Unset(Unset),
     MainMenuName(MainMenuName),
@@ -73,6 +75,7 @@ pub enum Entry {
     //MainMenu(MainMenu),
     Define(Define),
     Hwaddr(Hwaddr),
+    Command(String),
 }
 
 pub fn parse_entry(input: ConfigInInput) -> IResult<ConfigInInput, Entry> {
@@ -86,11 +89,11 @@ pub fn parse_entry(input: ConfigInInput) -> IResult<ConfigInInput, Entry> {
             map(ws(parse_define_tristate), Entry::DefineTristate),
             map(ws(parse_hwaddr), Entry::Hwaddr),
             map(ws(parse_define_bool), Entry::DefineBool),
+            map(ws(parse_dep_mbool), Entry::DepMbool),
         )),
         map(ws(parse_exec), Entry::Exec),
         //map(ws(parse_def_bool), Entry::DefBool),
         map(ws(parse_dep_bool), Entry::DepBool),
-        map(ws(parse_echo), Entry::Echo),
         map(ws(parse_string), Entry::String),
         map(ws(parse_if), Entry::If),
         map(ws(parse_hex), Entry::Hex),
@@ -105,11 +108,8 @@ pub fn parse_entry(input: ConfigInInput) -> IResult<ConfigInInput, Entry> {
         map(ws(parse_dep_tristate), Entry::DepTristate),
         map(ws(parse_source), Entry::Source),
         map(ws(parse_define), Entry::Define),
+        map(ws(parse_command), Entry::Command),
     ))(input)
-}
-
-pub fn parse_entries(input: ConfigInInput) -> IResult<ConfigInInput, Vec<Entry>> {
-    delimited(ws_comment, many0(parse_entry), ws_comment)(input)
 }
 
 #[cfg(test)]
@@ -148,3 +148,5 @@ pub mod source_test;
 mod type_test;
 #[cfg(test)]
 mod unset_test;
+#[cfg(test)]
+mod command_test;

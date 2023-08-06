@@ -22,7 +22,7 @@ fn test_parse_file() {
                     prompt: "Using SRM as bootloader".to_string(),
                     symbol: "CONFIG_ALPHA_SRM".to_string(),
                     r#type: TypeEnum::Bool,
-                    value: None
+                    value: vec!()
                 }),
                 Entry::DefineBool(DefineBool {
                     symbol: "CONFIG_PCI".to_string(),
@@ -33,3 +33,20 @@ fn test_parse_file() {
         ))
     )
 }
+
+
+#[test]
+fn test_parse_command() {
+    let input = "$MAKE -C drivers/sound config || exit 1";
+    assert_parsing_eq!(
+        parse_config,
+        input,
+        Ok((
+            "",
+            vec!(
+                Entry::Command("$MAKE -C drivers/sound config || exit 1".to_string()),
+            )
+        ))
+    )
+}
+

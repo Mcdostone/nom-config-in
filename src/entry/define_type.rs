@@ -8,7 +8,7 @@ use nom::{
 use serde::Serialize;
 
 use crate::{
-    symbol::parse_constant_symbol,
+    symbol::{parse_constant_symbol, parse_symbol},
     util::{ws, wsi},
     ConfigInInput,
 };
@@ -51,7 +51,7 @@ pub fn parse_define_bool(input: ConfigInInput) -> IResult<ConfigInInput, DefineT
         tuple((
             ws(tag("define_bool")),
             ws(parse_constant_symbol),
-            preceded(space0, parse_constant_symbol),
+            preceded(space0, parse_symbol),
         )),
         |(_, sym, value)| DefineType {
             symbol: sym.to_string(),

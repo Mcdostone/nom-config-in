@@ -3,7 +3,7 @@ use crate::{
     entry::{
         define_type::{
             parse_define_hex, parse_define_int, parse_define_string, parse_define_tristate,
-            DefineTristate,
+            DefineTristate, parse_define_bool,
         },
         DefineType,
     },
@@ -25,6 +25,27 @@ fn test_parse_define_int() {
         ))
     )
 }
+
+
+// 2.1.132/arch/i386/config.in
+#[test]
+fn test_parse_define_bool() {
+    let input = "define_bool CONFIG_PCI_BIOS \"y\"";
+    assert_parsing_eq!(
+        parse_define_bool,
+        input,
+        Ok((
+            "",
+            DefineType {
+                symbol: "CONFIG_PCI_BIOS".to_string(),
+                r#type: crate::entry::r#type::TypeEnum::Bool,
+                value: "\"y\"".to_string()
+            }
+        ))
+    )
+}
+
+
 
 #[test]
 fn test_parse_define_string() {

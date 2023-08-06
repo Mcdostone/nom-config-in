@@ -6,16 +6,18 @@ use nom::{
     character::complete::{char, digit1},
     combinator::{map, map_res, opt, recognize, value},
     multi::many0,
-    sequence::{delimited, pair, preceded, tuple},
+    sequence::{delimited, pair, preceded, tuple, terminated},
     IResult,
 };
 use serde::Serialize;
 
 use crate::{
     symbol::{parse_symbol, Symbol},
-    util::ws,
+    util::{ws, wsi},
     ConfigInInput,
 };
+
+use super::source::parse_path;
 
 // (GFS2_FS!=n) && NET && INET && (IPV6 || IPV6=n) && CONFIGFS_FS && SYSFS && (DLM=y || DLM=GFS2_FS)
 
@@ -73,6 +75,7 @@ pub struct CompareExpression {
 pub enum Atom {
     Symbol(String),
     Number(i64),
+    Existance(String),
     Compare(CompareExpression),
     Parenthesis(Box<Expression>),
     Bracket(Box<Expression>),
@@ -142,11 +145,18 @@ pub fn parse_atom(input: ConfigInInput) -> IResult<ConfigInInput, Atom> {
         map(delimited(tag("\""), parse_atom, tag("\"")), |d| {
             Atom::String(Box::new(d))
         }),
+        map(parse_entry_exists, Atom::Existance),
         map(parse_number, Atom::Number),
-        map(parse_symbol, Atom::Symbol),
         map(parse_symbol, Atom::Symbol),
     ))(input)
 }
+
+pub fn parse_entry_exists(input: ConfigInInput) -> IResult<ConfigInInput, String> {
+    //let t = tag("-f")(input);
+    map(preceded(wsi(tag("-f")), wsi(parse_path)), |f| f.to_string())(input)
+}
+
+
 
 pub fn parse_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
     parse_or_expression(input)

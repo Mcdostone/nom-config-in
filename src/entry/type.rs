@@ -4,11 +4,11 @@ use nom::{
     character::complete::{line_ending, not_line_ending, space0},
     combinator::{eof, map, opt},
     sequence::{pair, preceded, terminated, tuple},
-    IResult,
+    IResult, multi::{many1, many0},
 };
 use serde::Serialize;
 
-use crate::{symbol::parse_constant_symbol, util::ws, ConfigInInput};
+use crate::{symbol::parse_constant_symbol, util::{ws, wsi}, ConfigInInput};
 
 use super::{comment::parse_prompt_option, expression::parse_number};
 
@@ -17,8 +17,7 @@ pub struct Type<T> {
     pub prompt: String,
     pub r#type: TypeEnum,
     pub symbol: String,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<T>,
+    pub value: T,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -30,13 +29,13 @@ pub enum TypeEnum {
     Bool,
 }
 
-pub fn parse_bool(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
+pub fn parse_bool(input: ConfigInInput) -> IResult<ConfigInInput, Type<Vec<String>>> {
     map(
         tuple((
             ws(tag("bool")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            opt(map(parse_bool_value, |d| d.to_string())),
+            many0(map(parse_bool_value, |d| d.to_string())),
         )),
         |(_, prompt, sym, value)| Type {
             prompt: prompt.to_string(),
@@ -67,13 +66,13 @@ pub fn parse_config<T>(input: ConfigInInput) -> IResult<ConfigInInput, Type<T>> 
     ))(input)
 }*/
 
-pub fn parse_hex(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
+pub fn parse_hex(input: ConfigInInput) -> IResult<ConfigInInput, Type<Hex>> {
     map(
         tuple((
             ws(tag("hex")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            opt(map(parse_hex_value, |d| d.fragment().to_string())),
+            many0(parse_hex_value),
         )),
         |(_, prompt, sym, value)| Type {
             prompt: prompt.to_string(),
@@ -84,11 +83,19 @@ pub fn parse_hex(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
     )(input)
 }
 
-pub fn parse_hex_value(input: ConfigInInput) -> IResult<ConfigInInput, ConfigInInput> {
-    preceded(space0, parse_constant_symbol)(input)
+pub fn parse_hex_value(input: ConfigInInput) -> IResult<ConfigInInput, String> {
+    map(wsi(parse_constant_symbol), |d| d.to_string())(input)
 }
 
-pub type Int = (i64, Option<(i64, i64)>);
+pub type Int = Vec<IntValue>;
+pub type Hex = Vec<String>;
+
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub enum IntValue {
+    Number(i64),
+    Variable(String)
+}
 
 pub fn parse_int(input: ConfigInInput) -> IResult<ConfigInInput, Type<Int>> {
     map(
@@ -96,31 +103,31 @@ pub fn parse_int(input: ConfigInInput) -> IResult<ConfigInInput, Type<Int>> {
             ws(tag("int")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            parse_int_value,
+            many1(wsi(parse_int_value)),
         )),
         |(_, prompt, sym, value)| Type {
             prompt: prompt.to_string(),
             symbol: sym.to_string(),
             r#type: TypeEnum::Int,
-            value: Some(value),
+            value: value,
         },
     )(input)
 }
 
-pub fn parse_int_value(input: ConfigInInput) -> IResult<ConfigInInput, Int> {
-    tuple((
-        ws(map(parse_number, |s| s)),
-        opt(pair(map(parse_number, |s| s), ws(map(parse_number, |s| s)))),
-    ))(input)
+pub fn parse_int_value(input: ConfigInInput) -> IResult<ConfigInInput, IntValue> {
+        alt((
+            map(wsi(map(parse_number, |s| s)), IntValue::Number),
+            map(wsi(map(parse_constant_symbol, |s| s)), |s| IntValue::Variable(s.to_string())),
+        ))(input)
 }
 
-pub fn parse_tristate(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>> {
+pub fn parse_tristate(input: ConfigInInput) -> IResult<ConfigInInput, Type<Option<String>>> {
     map(
         tuple((
             ws(tag("tristate")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            preceded(space0, opt(map(parse_tristate_value, |d| d.to_string()))),
+            opt(preceded(space0, map(parse_tristate_value, |d| d.to_string()))),
         )),
         |(_, p, e, i)| Type {
             prompt: p.to_string(),
@@ -141,7 +148,7 @@ pub fn parse_string(input: ConfigInInput) -> IResult<ConfigInInput, Type<String>
             ws(tag("string")),
             ws(parse_prompt_option),
             ws(parse_constant_symbol),
-            preceded(space0, opt(parse_string_value)),
+            preceded(space0, parse_string_value),
         )),
         |(_, p, e, v)| Type {
             prompt: p.to_string(),

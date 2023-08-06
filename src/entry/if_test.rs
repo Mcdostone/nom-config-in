@@ -90,7 +90,7 @@ fn test_parse_if_else_entry() {
                     symbol: "CONFIG_BLK_DEV_SD".to_string(),
                     r#type: crate::entry::r#type::TypeEnum::Bool,
                     prompt: "Scsi disk support".to_string(),
-                    value: Some("y".to_string())
+                    value: vec!("y".to_string())
                 })))
             }
         ))
@@ -129,3 +129,33 @@ fn test_parse_if_else_backtick() {
         ))
     )
 }
+
+// 2.1.43/drivers/net/Config.in
+#[test]
+fn test_parse_if_file_exists() {
+    let input = r#"if [ -f drivers/net/soundmodem/sm_afsk2666.c ]; then
+    bool 'Soundmodem support for 2666 baud AFSK modulation' CONFIG_SOUNDMODEM_AFSK2666
+    fi"#;
+    assert_parsing_eq!(
+        parse_if,
+        input,
+        Ok((
+            "",
+            If {
+                condition: Expression::Term(AndExpression::Term(Term::Atom(Atom::Bracket(
+                    Box::new(Expression::Term(AndExpression::Term(Term::Atom(
+                        Atom::Existance("drivers/net/soundmodem/sm_afsk2666.c".to_string()
+                    ))))))))),
+                if_block: vec!(Entry::Bool(Type {
+                    prompt: "Soundmodem support for 2666 baud AFSK modulation".to_string(),
+                    symbol: "CONFIG_SOUNDMODEM_AFSK2666".to_string(),
+                    value: vec!(),
+                    r#type: TypeEnum::Bool,
+                })),
+                else_block: None
+            }
+        ))
+    )
+}
+
+
