@@ -11,8 +11,6 @@ use nom::{
     AsChar, Compare, IResult, InputIter, InputLength, InputTake, InputTakeAtPosition, Slice,
 };
 
-
-
 pub fn ws_comment<I, E: ParseError<I>>(input: I) -> IResult<I, (), E>
 where
     I: Clone + InputLength + InputTake,
