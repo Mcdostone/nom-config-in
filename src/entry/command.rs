@@ -2,7 +2,7 @@ use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{line_ending, not_line_ending},
-    combinator::{map, eof},
+    combinator::{eof, map},
     sequence::{pair, terminated},
     IResult,
 };
