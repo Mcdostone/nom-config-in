@@ -17,7 +17,7 @@ use crate::{
     ConfigInInput,
 };
 
-use super::source::parse_path;
+use super::source::parse_filepath;
 
 // (GFS2_FS!=n) && NET && INET && (IPV6 || IPV6=n) && CONFIGFS_FS && SYSFS && (DLM=y || DLM=GFS2_FS)
 
@@ -153,7 +153,9 @@ pub fn parse_atom(input: ConfigInInput) -> IResult<ConfigInInput, Atom> {
 
 pub fn parse_entry_exists(input: ConfigInInput) -> IResult<ConfigInInput, String> {
     //let t = tag("-f")(input);
-    map(preceded(wsi(tag("-f")), wsi(parse_path)), |f| f.to_string())(input)
+    map(preceded(wsi(tag("-f")), wsi(parse_filepath)), |f| {
+        f.to_string()
+    })(input)
 }
 
 pub fn parse_expression(input: ConfigInInput) -> IResult<ConfigInInput, Expression> {
