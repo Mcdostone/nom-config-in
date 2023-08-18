@@ -1,3 +1,5 @@
 target
 config.in
 tarpaulin-report.html 
+.vscode
+.DS_Store
