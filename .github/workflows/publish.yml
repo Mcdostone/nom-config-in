@@ -8,10 +8,10 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: github.ref_protected
     steps:
+      - run: echo ${{ github.ref }} ${{ github.ref_protected }}
       - uses: actions/checkout@v3
-      #- uses: actions-rs/toolchain@v1
+      - uses: actions-rs/toolchain@v1
       #  with:
       #    toolchain: stable
       #    profile: minimal
