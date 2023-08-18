@@ -19,4 +19,4 @@ jobs:
       - name: Make sure crate is ready
         run: cargo publish --dry-run
       - name: Publish the crate
-        run: cargo publish --token ${{ CRATES_TOKEN }}
+        run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
