@@ -6,9 +6,6 @@
   <a href="https://www.rust-lang.org/">
     <img src="https://img.shields.io/badge/Rust-1.71.0-green.svg?logo=rust" alt="Rust version"/>
   </a>
-<a href="https://codecov.io/gh/Mcdostone/nom-config-in" > 
- <img src="https://codecov.io/gh/Mcdostone/nom-config-in/branch/main/graph/badge.svg?token=PSMOBWY478"/> 
- </a>
  <a href="https://codecov.io/gh/Mcdostone/nom-config-in" > 
  <img src="https://codecov.io/gh/Mcdostone/nom-config-in/graph/badge.svg?token=PSMOBWY478"/> 
  </a>
@@ -21,7 +18,7 @@
 </p>
 
 
-**This parser is not actively maintened** since it has been replaced by Kconfig. This library has been tested from linux kernel [1.0](https://cdn.kernel.org/pub/linux/kernel/v1.0/) to [2.5.44](https://cdn.kernel.org/pub/linux/kernel/v2.5/) (542 versions).
+**This parser is not actively maintained** since it has been replaced by [Kconfig](https://www.kernel.org/doc/html/next/kbuild/kconfig-language.html). This library has been tested from linux kernel [1.0](https://cdn.kernel.org/pub/linux/kernel/v1.0/) to [2.5.44](https://cdn.kernel.org/pub/linux/kernel/v2.5/) (542 versions).
 
 
 A Config.in file looks like this:
