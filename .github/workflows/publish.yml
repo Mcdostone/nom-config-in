@@ -2,28 +2,28 @@ name: Publish
 
 on:
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+    branches: [main]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: git branch -a --contains ${{ github.ref_name }}
-      - run: git branch -a --contains ${{ github.ref_name }} | grep ' main'
-        id: check
-        continue-on-error: true
-      - uses: actions-rs/toolchain@v1
-        if: steps.check.outcome == 'success'
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-      - name: Make sure crate is ready
-        if: steps.check.outcome == 'success'
-        run: cargo publish --dry-run
-        continue-on-error: true
+      - run: echo ${{ github.ref }}
+    #  - run: git branch -a --contains ${{ github.ref_name }}
+    #  - run: git branch -a --contains ${{ github.ref_name }} | grep ' main'
+    #    id: check
+    #    continue-on-error: true
+    #  - uses: actions-rs/toolchain@v1
+    #    if: steps.check.outcome == 'success'
+    #    with:
+    #      toolchain: stable
+    #      profile: minimal
+    #      override: true
+    #  - name: Make sure crate is ready
+    #    if: steps.check.outcome == 'success'
+    #    run: cargo publish --dry-run
+    #    continue-on-error: true
       #- name: Publish the crate
       # if: steps.check.outcome == 'success'
       #  run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
