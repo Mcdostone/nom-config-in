@@ -16,6 +16,7 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
       - run: git branch -a --contains ${{ github.ref_name }} 2> /dev/null | grep -q ' main' && echo "value=true" || echo "value=false" >> "$GITHUB_OUTPUT"
+        id: check
 
   publish:
     runs-on: ubuntu-latest
