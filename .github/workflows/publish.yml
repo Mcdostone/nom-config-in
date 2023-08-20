@@ -2,13 +2,15 @@ name: Publish
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: echo ${{ github.event.repository.default_branch }}
       - run: echo ${{ github.ref }}
     #  - run: git branch -a --contains ${{ github.ref_name }}
     #  - run: git branch -a --contains ${{ github.ref_name }} | grep ' main'
