@@ -29,9 +29,7 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-      #- name: Make sure crate is ready
-      #  if: steps.check.outcome == 'success'
-      #  run: cargo publish --dry-run
-      #- name: Publish the crate
-      # if: steps.check.outcome == 'success'
-      #  run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
+      - name: Make sure crate is ready
+        run: cargo publish --dry-run
+      - name: Publish the crate
+        run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
