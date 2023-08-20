@@ -9,14 +9,17 @@ jobs:
   check:
     runs-on: ubuntu-latest
     outputs:
-      result: ${{ steps.check.outputs.value }}
+      result: ${{ steps.check-branch.outputs.value }}
+      output1: ${{ steps.step1.outputs.test }}
     steps:
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
       - run: git branch -a --contains ${{ github.ref_name }} 2> /dev/null | grep -q ' main' && echo "value=true" || echo "value=false" >> "$GITHUB_OUTPUT"
-        id: check
+        id: check-branch
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
 
   publish:
     runs-on: ubuntu-latest
@@ -24,6 +27,7 @@ jobs:
     #if: needs.check.outputs.result == 'true'
     steps:
       - uses: actions/checkout@v3
+      - run: echo ${{ needs.check.outputs.output1 }}
       - run: echo ${{ needs.check.outputs.result }}
       - uses: actions-rs/toolchain@v1
         with:
