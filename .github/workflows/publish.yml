@@ -7,7 +7,6 @@ on:
 
 jobs:
   check:
-    name: Make sure tag belongs to main branch
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.check.outputs.test }}
@@ -28,17 +27,18 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: check
-    if: needs.check.outputs.result.value == 'true'
+    #if: needs.check.outputs.result.value == 'true'
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-      - name: Make sure crate is ready
-        if: steps.check.outcome == 'success'
-        run: cargo publish --dry-run
+      - run: echo ${{ needs.check.outputs.result.value }}
+      #- uses: actions-rs/toolchain@v1
+      #  with:
+      #    toolchain: stable
+      #    profile: minimal
+      #    override: true
+      #- name: Make sure crate is ready
+      #  if: steps.check.outcome == 'success'
+      #  run: cargo publish --dry-run
       #- name: Publish the crate
       # if: steps.check.outcome == 'success'
       #  run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
