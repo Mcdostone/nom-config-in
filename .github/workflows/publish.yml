@@ -9,14 +9,20 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ github.ref }} ${{ github.ref_protected }}
+      - run: git branch -a --contains v0.2.0 | grep ' main'
+        id: check
+        continue-on-error: true
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
-      #  with:
-      #    toolchain: stable
-      #    profile: minimal
-      #    override: true
-      #- name: Make sure crate is ready
-      #  run: cargo publish --dry-run
+        if: steps.check.outcome == 'success'
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Make sure crate is ready
+        if: steps.check.outcome == 'success'
+        run: cargo publish --dry-run
+        continue-on-error: true
       #- name: Publish the crate
+      # if: steps.check.outcome == 'success'
       #  run: cargo publish --token ${{ secrets.CRATES_TOKEN }}
