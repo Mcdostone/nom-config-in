@@ -9,10 +9,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - run: git branch -a --contains v0.2.0 | grep ' main'
+      - uses: actions/checkout@v3
+      - run: git branch -a --contains ${{ github.ref_name }} | grep ' main'
         id: check
         continue-on-error: true
-      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         if: steps.check.outcome == 'success'
         with:
